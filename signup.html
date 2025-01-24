@@ -1,0 +1,27 @@
+<HTML>
+	<HEAD Login page>
+		<TITLE>login page</TITLE>
+		<SCRIPT>
+			function check(user, pwd)
+			{
+				if(user=="" || pass=="")
+				{
+					document.getElementById("error").innerHTML = "missing data";
+					return false;
+				}
+				return true;
+			}
+		</SCRIPT>
+	</HEAD>
+	<BODY>
+	    <H2>Users data</H2><BR>
+		<p>Please enter user data</p>
+		<link rel="stylesheet" type="text/css" href="users.css">
+		<FORM name="form1" method="post" ACTION="signup.php">
+			User name: <INPUT type="text" name="user"/> <BR/><BR/>
+			Password : <INPUT type="password" name="pwd"/> <BR/><BR/>
+		    <INPUT type="submit" value="signup" onClick="return check(user.value, pwd.value);"/>
+			<DIV id="error"></DIV>
+		</FORM>
+	</BODY>
+</HTML>

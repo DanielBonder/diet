@@ -1,0 +1,34 @@
+h1 
+    { 
+    font-size: 2.2em; 
+} 
+     
+h2 
+    { 
+	font-family: verdana;
+	color: indigo;
+    font-size: 2.0em; 
+    text-align: left;
+} 
+     
+h3 
+    { 
+    font-size: 1.8em; 
+} 
+     
+h4 
+    { 
+    font-size: 1.6em;     
+} 
+     
+h5 
+    { 
+    font-size: 1.4em;     
+} 
+     
+p 
+    { 
+	font-family: verdana;
+	color: blue;
+    font-size: 1.2em;
+}
