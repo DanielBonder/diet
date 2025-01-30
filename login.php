@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
         
-        if (password_verify($password, $user['password'])) {
+        if ($password === $user['password']) { // השוואה ישירה כי הסיסמה אינה מוצפנת
             // התחברות מוצלחת - שמירת נתוני המשתמש בסשן
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['full_name'] = $user['full_name'];
@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['email'] = $user['email'];
 
             echo "Login successful! Redirecting...";
-            header("Refresh:2; url=dashboard.php");
+            header("Refresh:2; url=home.html");
             exit();
         } else {
             die("Error: Invalid password.");
