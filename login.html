@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h2>User Login</h2>
+    <p>Please enter your username or email and password to login</p>
+    
+    <form name="loginForm" method="post" action="login.php" onsubmit="return checkLoginForm();">
+        Username or Email: <input type="text" name="loginInput" id="loginInput" /><br /><br />
+        Password: <input type="password" name="password" id="password" /><br /><br />
+        <input type="submit" value="Login" />
+        <div id="error"></div>
+    </form>
+</body>
+</html>
