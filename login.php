@@ -8,13 +8,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
     if (empty($loginInput) || empty($password)) {
-        die("Error: Both fields are required.");
+        die("<div class='error'>Error: Both fields are required.</div><style>.error {color: red; font-size: 18px; font-weight: bold; background-color: #f8d7da; padding: 10px; border-radius: 5px; text-align: center;}</style>");
     }
 
     // חיבור למסד הנתונים
     $conn = new mysqli("localhost", "root", "", "Db_Management_App");
     if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+        die("<div class='error'>Connection failed: " . $conn->connect_error . "</div>");
     }
 
     // בדיקה אם הקלט הוא אימייל או שם משתמש
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        die("Error preparing statement: " . $conn->error);
+        die("<div class='error'>Error preparing statement: " . $conn->error . "</div>");
     }
 
     $stmt->bind_param("s", $loginInput);
@@ -43,14 +43,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
 
-            echo "Login successful! Redirecting...";
+            echo "<div class='success'>Login successful! Redirecting...</div>";
+            echo "<style>.success {color: green; font-size: 18px; font-weight: bold; background-color: #d4edda; padding: 10px; border-radius: 5px; text-align: center;}</style>";
             header("Refresh:2; url=home.html");
             exit();
         } else {
-            die("Error: Invalid password.");
+            die("<div class='error'>Error: Invalid password.</div><style>.error {color: red; font-size: 18px; font-weight: bold; background-color: #f8d7da; padding: 10px; border-radius: 5px; text-align: center;}</style>");
         }
     } else {
-        die("Error: User not found.");
+        die("<div class='error'>Error: User not found.</div><style>.error {color: red; font-size: 18px; font-weight: bold; background-color: #f8d7da; padding: 10px; border-radius: 5px; text-align: center;}</style>");
     }
 
     $stmt->close();
