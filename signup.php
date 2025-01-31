@@ -6,7 +6,7 @@ $errorMessage = "";
 $successMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // קבלת נתונים ובדיקה אם הם קיימים
+    // קבלת נתונים מהטופס
     $fullName = isset($_POST['fullName']) ? trim($_POST['fullName']) : '';
     $userName = isset($_POST['userName']) ? trim($_POST['userName']) : '';
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
@@ -14,13 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $weight = isset($_POST['weight']) ? floatval($_POST['weight']) : 0;
     $height = isset($_POST['height']) ? floatval($_POST['height']) : 0;
 
-    // בדיקה אם יש שדות ריקים
+    // בדיקה אם כל השדות מולאו
     if (empty($fullName) || empty($userName) || empty($email) || empty($password) || $weight <= 0 || $height <= 0) {
         $errorMessage = "Error: All fields are required.";
     } else {
-        // חישוב BMI
-        $bmi = ($height > 0) ? ($weight / (($height / 100) * ($height / 100))) : null;
-
         // חיבור למסד הנתונים
         $conn = new mysqli("localhost", "root", "", "Db_Management_App");
         if ($conn->connect_error) {
@@ -36,16 +33,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $stmt->close();
 
-                // הכנסת נתונים למסד הנתונים
-                $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, password, weight, height, bmi) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                // הכנסת נתונים למסד הנתונים (ללא עמודת ה-BMI המחושבת)
+                $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, password, weight, height) VALUES (?, ?, ?, ?, ?, ?)");
                 if (!$stmt) {
                     $errorMessage = "Error preparing statement: " . $conn->error;
                 } else {
-                    if (!$stmt->bind_param("ssssddd", $fullName, $userName, $email, $password, $weight, $height, $bmi)) {
+                    if (!$stmt->bind_param("ssssdd", $fullName, $userName, $email, $password, $weight, $height)) {
                         $errorMessage = "Error binding parameters: " . $stmt->error;
                     } else {
                         if ($stmt->execute()) {
-                            $successMessage = "Signup successful! Redirecting to login...";
+                            // קבלת ערך ה-BMI המחושב מהמסד
+                            $stmt = $conn->prepare("SELECT bmi FROM users WHERE email = ?");
+                            $stmt->bind_param("s", $email);
+                            $stmt->execute();
+                            $stmt->bind_result($calculatedBmi);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $successMessage = "Signup successful! Your BMI: " . number_format($calculatedBmi, 2);
                             echo "<script>setTimeout(function(){ window.location.href = 'login.html'; }, 3000);</script>";
                         } else {
                             $errorMessage = "Error executing query: " . $stmt->error;
