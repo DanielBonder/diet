@@ -1,123 +1,167 @@
 <?php
-session_start();
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fullName = trim($_POST['fullName']);
-    $userName = trim($_POST['userName']);
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
-    $weight = $_POST['weight'];
-    $height = $_POST['height'];
+session_start();
 
-    if (empty($fullName) || empty($userName) || empty($email) || empty($password) || empty($weight) || empty($height)) {
-        displayError("All fields are required.");
-    }
-
-    // חישוב BMI
-    $bmi = $height > 0 ? $weight / pow($height / 100, 2) : null;
-
-    // חיבור למסד הנתונים
-    $conn = new mysqli("localhost", "root", "", "Db_Management_App");
-    if ($conn->connect_error) {
-        displayError("Connection failed: " . $conn->connect_error);
-    }
-
-    // בדיקה אם המשתמש כבר קיים לפי שם משתמש או אימייל
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $stmt->bind_param("ss", $userName, $email);
-    $stmt->execute();
-    $stmt->store_result();
-
-    if ($stmt->num_rows > 0) {
-        displayError("Username or email already exists.");
-    }
-
-    $stmt->close();
-
-    // הכנסת המשתמש למסד הנתונים כולל BMI
-    $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, password, weight, height, bmi) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssdd", $fullName, $userName, $email, $password, $weight, $height, $bmi);
-
-    if ($stmt->execute()) {
-        // הצלחה – עיצוב הודעת מעבר
-        echo '
-        <div class="signup-success">
-            <h2>Welcome, ' . htmlspecialchars($fullName) . '!</h2>
-            <p>Your account has been successfully created.<br>Redirecting to login page...</p>
-        </div>
-        <style>
-            body {
-                background: linear-gradient(to right, #ffe4b5, #ffb6c1);
-                font-family: Arial, sans-serif;
-                text-align: center;
-                margin: 0;
-                padding: 0;
-            }
-            .signup-success {
-                margin: 100px auto;
-                padding: 40px;
-                background-color: #fff0e1;
-                border-radius: 40px;
-                width: 90%;
-                max-width: 500px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                animation: fadeIn 1s ease-in-out;
-            }
-            .signup-success h2 {
-                font-family: "Suez One", serif;
-                font-size: 28px;
-                color: #2e7d32;
-                margin-bottom: 20px;
-            }
-            .signup-success p {
-                font-size: 18px;
-                color: #444;
-                line-height: 1.6;
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to   { opacity: 1; transform: translateY(0); }
-            }
-        </style>';
-
-        header("Refresh:3; url=../login/login.html");
-        exit();
-    } else {
-        displayError("Error: " . $stmt->error);
-    }
-
-    $stmt->close();
-    $conn->close();
+// בדיקת הרשאות - רק admin
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    die("⛔ אין גישה. עמוד זה מיועד רק למנהלים.");
 }
 
-function displayError($message) {
-    echo '
-    <div class="error-message">
-        ' . htmlspecialchars($message) . '
-    </div>
+require_once 'db.php';
+
+// טיפול במחיקה
+if (isset($_GET['delete'])) {
+    $delete_id = intval($_GET['delete']);
+    $conn->query("DELETE FROM users WHERE id = $delete_id");
+    header("Location: manage_customers.php");
+    exit;
+}
+
+// טיפול בעדכון או הוספה
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['save_id'])) {
+        // עדכון
+        $update_id = intval($_POST['save_id']);
+        $full_name = $conn->real_escape_string($_POST['full_name']);
+        $email = $conn->real_escape_string($_POST['email']);
+        $username = $conn->real_escape_string($_POST['username']);
+
+        $conn->query("UPDATE users SET full_name = '$full_name', email = '$email', username = '$username' WHERE id = $update_id");
+        header("Location: manage_customers.php");
+        exit;
+    } elseif (isset($_POST['add_new'])) {
+        // הוספה
+        $full_name = $conn->real_escape_string($_POST['full_name']);
+        $email = $conn->real_escape_string($_POST['email']);
+        $username = $conn->real_escape_string($_POST['username']);
+        $password = $conn->real_escape_string($_POST['password']);
+        $weight = floatval($_POST['weight']);
+        $height = floatval($_POST['height']);
+        $bmi = $height > 0 ? $weight / pow($height / 100, 2) : null;
+
+        $sql = "INSERT INTO users (full_name, email, username, password, weight, height, bmi, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("sssssdd", $full_name, $email, $username, $password, $weight, $height, $bmi);
+            $stmt->execute();
+            $stmt->close();
+        } else {
+            die("שגיאה בהכנת השאילתה: " . $conn->error);
+        }
+
+        header("Location: manage_customers.php");
+        exit;
+    }
+}
+
+$result = $conn->query("SELECT id, full_name, email, username FROM users ORDER BY id DESC");
+$edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
+?>
+
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>ניהול לקוחות</title>
     <style>
         body {
-            background: linear-gradient(to right, #ffe4b5, #ffb6c1);
+            direction: rtl;
             font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px;
             text-align: center;
-            margin: 0;
-            padding: 0;
         }
-        .error-message {
-            margin: 100px auto;
-            padding: 30px;
-            background-color: #f8d7da;
-            color: #721c24;
-            border-radius: 20px;
+        h1 {
+            margin-bottom: 30px;
+        }
+        table {
+            margin: 0 auto 40px auto;
+            border-collapse: collapse;
             width: 90%;
-            max-width: 500px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-    </style>';
-    exit();
-}
-?>
+        th, td {
+            padding: 12px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        th {
+            background-color: #ffe4b5;
+        }
+        a.btn, button.btn {
+            background-color: #ff6347;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+        a.btn:hover, button.btn:hover {
+            background-color: #e5533d;
+        }
+        .update-form, .add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        .update-form input, .add-form input {
+            padding: 6px;
+            font-size: 14px;
+            width: 250px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ניהול לקוחות</h1>
+
+    <h2>הוספת לקוח חדש</h2>
+    <form method="POST" class="add-form">
+        <input type="text" name="full_name" placeholder="שם מלא" required>
+        <input type="email" name="email" placeholder="אימייל" required>
+        <input type="text" name="username" placeholder="שם משתמש" required>
+        <input type="text" name="password" placeholder="סיסמה" required>
+        <input type="number" step="0.01" name="weight" placeholder="משקל (ק"ג)" required>
+        <input type="number" step="0.01" name="height" placeholder="גובה (ס"מ)" required>
+        <button type="submit" name="add_new" class="btn">הוסף לקוח</button>
+    </form>
+
+    <h2>רשימת לקוחות קיימים</h2>
+    <table>
+        <tr>
+            <th>מספר לקוח</th>
+            <th>שם מלא</th>
+            <th>אימייל</th>
+            <th>שם משתמש</th>
+            <th>עדכון</th>
+            <th>מחיקה</th>
+        </tr>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+                <?php if ($edit_id === intval($row['id'])): ?>
+                    <form method="POST" class="update-form">
+                        <td><?= $row['id'] ?><input type="hidden" name="save_id" value="<?= $row['id'] ?>"></td>
+                        <td><input type="text" name="full_name" value="<?= htmlspecialchars($row['full_name']) ?>"></td>
+                        <td><input type="email" name="email" value="<?= htmlspecialchars($row['email']) ?>"></td>
+                        <td><input type="text" name="username" value="<?= htmlspecialchars($row['username']) ?>"></td>
+                        <td><button type="submit" class="btn">שמור</button></td>
+                        <td><a href="manage_customers.php" class="btn">ביטול</a></td>
+                    </form>
+                <?php else: ?>
+                    <td><?= $row['id'] ?></td>
+                    <td><?= htmlspecialchars($row['full_name']) ?></td>
+                    <td><?= htmlspecialchars($row['email']) ?></td>
+                    <td><?= htmlspecialchars($row['username']) ?></td>
+                    <td><a href="manage_customers.php?edit=<?= $row['id'] ?>" class="btn">עדכן</a></td>
+                    <td><a href="manage_customers.php?delete=<?= $row['id'] ?>" class="btn" onclick="return confirm('האם אתה בטוח שברצונך למחוק לקוח זה?')">מחק</a></td>
+                <?php endif; ?>
+            </tr>
+        <?php endwhile; ?>
+    </table>
+</body>
+</html>

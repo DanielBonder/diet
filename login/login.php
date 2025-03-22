@@ -37,13 +37,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
 
         if ($password === $user['password']) { // השוואה ישירה (ללא הצפנה)
-            // התחברות מוצלחת - שמירת נתוני המשתמש בסשן
+
+            // ✅ שמירת כל הנתונים כולל is_admin
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['is_admin'] = $user['is_admin']; // ✔️ חשוב!
 
-            // הודעת הצלחה בעיצוב תואם
+            // הודעת הצלחה
             echo '
             <div class="login-success">
                 <h2>Welcome back, ' . htmlspecialchars($user['full_name']) . '!</h2>
@@ -84,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             </style>';
 
+            // הפניה אחרי 2 שניות
             header("Refresh:2; url=../home/home.php");
             exit();
         } else {
@@ -97,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 
-// פונקציה להדפסת שגיאות עם עיצוב
+// פונקציה להצגת הודעות שגיאה
 function displayError($message) {
     echo '
     <div class="error-message">
