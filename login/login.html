@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="login.css">
+    <script src="../script.js" defer></script>
+</head>
+<body>
+    <div class="back-home">
+        <a href="../home/home.php" class="home-button">חזרה לדף הבית</a>
+    </div>
+    
+    <div class="login-container">
+        <h2>User Login</h2>
+        <p>Please enter your username or email and password to login</p>
+
+        <form name="loginForm" method="post" action="login.php" onsubmit="return checkLoginForm();">
+            <input type="text" name="loginInput" id="loginInput" placeholder="Username or Email" required /><br />
+            <input type="password" name="password" id="password" placeholder="Password" required /><br />
+            <input type="submit" value="Login" />
+            <div id="error"></div>
+        </form>
+
+        <p>Don't have an account? <a href="../signup/signup.html">Sign up here</a></p>
+    </div>
+    
+</body>
+
+</html>

@@ -1,0 +1,115 @@
+/* עיצוב כללי */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(to right, #ffe4b5, #ffb6c1);
+}
+
+/* עטיפה כללית */
+.login-container {
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #fff0e1;
+    border-radius: 40px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* כותרת */
+h2 {
+    font-family: 'Suez One', serif;
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* תיאור קצר */
+p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* שדות טופס */
+input[type="text"],
+input[type="password"] {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 40px;
+    border: none;
+    background-color: blanchedalmond;
+    font-weight: bold;
+    margin-bottom: 20px;
+    width: 80%;
+    outline: none;
+}
+
+/* כפתור התחברות */
+input[type="submit"] {
+    padding: 12px 25px;
+    font-size: 18px;
+    background-color: #ffb6c1;
+    color: #000;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #ffa6b1;
+}
+
+/* הודעת שגיאה */
+#error {
+    color: red;
+    margin-top: 10px;
+}
+
+/* קישור לרישום */
+a {
+    color: #8b0000;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* רספונסיביות */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 30px 20px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+    }
+}
+
+
+.back-home {
+    margin-top: 20px;
+    text-align: center;
+    font-family: 'Suez One', serif;
+}
+
+.home-button {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 90px;
+    font-weight: bold;
+    background-color: blanchedalmond;
+    color: black;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: #f5deb3; /* קצת כהה יותר מ-blanchedalmond */
+    color: darkred;
+}
