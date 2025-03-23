@@ -104,6 +104,21 @@ if ($result && $result->num_rows > 0) {
             text-align: center;
             padding: 40px;
         }
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .back-button a {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .back-button a:hover {
+            background-color: #218838;
+        }
         table {
             width: 90%;
             margin: 20px auto;
@@ -155,6 +170,10 @@ if ($result && $result->num_rows > 0) {
     </style>
 </head>
 <body>
+    <div class="back-button">
+        <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
+    </div>
+
     <h1>ניהול לקוחות</h1>
 
     <?php if (!empty($message)): ?>
@@ -167,8 +186,8 @@ if ($result && $result->num_rows > 0) {
         <input type="text" name="username" placeholder="שם משתמש" required>
         <input type="email" name="email" placeholder="אימייל" required>
         <input type="password" name="password" placeholder="סיסמה" required>
-        <input type="number" name="weight" placeholder="משקל (ק&quot;ג)" step="0.1" required>
-        <input type="number" name="height" placeholder="גובה (ס&quot;מ)" step="0.1" required>
+        <input type="number" name="weight" placeholder="משקל (ק\"ג)" step="0.1" required>
+        <input type="number" name="height" placeholder="גובה (ס\"מ)" step="0.1" required>
         <button type="submit" name="add_new">➕ הוסף לקוח</button>
     </form>
 

@@ -35,3 +35,30 @@ CREATE TABLE appointments (
   available_time TIME NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE appointments ADD meeting_type VARCHAR(20) NOT NULL;
+
+CREATE TABLE payment_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50), -- ליווי חודשי / ל-3 חודשים / ל-6 חודשים
+  duration_months INT, -- 1 / 3 / 6
+  price DECIMAL(10,2)
+);
+
+CREATE TABLE payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  plan_id INT,
+  due_date DATE,
+  amount DECIMAL(10,2),
+  status ENUM('שולם', 'לא שולם') DEFAULT 'לא שולם',
+  paid_at DATETIME NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (plan_id) REFERENCES payment_plans(id)
+);
+
+INSERT INTO payment_plans (name, duration_months, price) VALUES
+('ליווי חודשי', 1, 650),
+('ליווי ל-3 חודשים', 3, 1350),
+('ליווי ל-6 חודשים', 6, 2400);
