@@ -56,9 +56,29 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['
         .card a:hover {
             background-color: #e69500;
         }
+        .top-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .top-bar a {
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        .top-bar a:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+
+    <div class="top-bar">
+        <a href="login admin/login_admin.html">התנתק</a>
+    </div>
+
     <h1>לוח ניהול - ברוך הבא <?= htmlspecialchars($_SESSION['full_name']) ?></h1>
 
     <div class="dashboard">

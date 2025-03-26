@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>כניסת מנהלים</title>
+    <link rel="stylesheet" href="login_admin.css">
+    <script src="../script.js" defer></script>
+</head>
+
+
+    <div class="login-container">
+        <h1>🔐 כניסת מנהלים</h1>
+        <p>אנא הזינו שם משתמש או אימייל וסיסמה על מנת להיכנס למערכת הניהול</p>
+
+        <form name="loginForm" method="post" action="login_admin.php" onsubmit="return checkLoginForm();">
+            <input type="text" name="loginInput" id="loginInput" placeholder="שם משתמש או אימייל" required /><br />
+            <input type="password" name="password" id="password" placeholder="סיסמה" required /><br />
+            <input type="submit" value="התחבר" />
+            <div id="error"></div>
+        </form>
+
+    </div>
+</body>
+</html>
