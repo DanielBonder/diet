@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>בחירת תוכנית</title>
-  <link rel="stylesheet" href="../home/home.css">
+  <link rel="stylesheet" href="../home.css">
 </head>
 <body dir="rtl" style="font-family: Arial, sans-serif;">
 <div class="back-home">

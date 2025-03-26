@@ -25,7 +25,7 @@
 
 
             <?php if (isset($_SESSION['username'])): ?>
-                <li><a href="../user/user_dashboard.php">שלום, <?= htmlspecialchars($_SESSION['username']) ?></a></li>
+                <li><a href="user/user_dashboard.php">שלום, <?= htmlspecialchars($_SESSION['username']) ?></a></li>
                 <li><a href="../login/logout.php">התנתקות</a></li>
             <?php else: ?>
                 <li><a href="../login/login.html" class="login-btn">התחברות</a></li>

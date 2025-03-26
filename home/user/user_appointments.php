@@ -2,11 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login/login.php");
     exit;
 }
 
-require_once '../admin/db.php';
+require_once '../../admin/db.php';
 
 $message = "";
 $available_slots = [];
