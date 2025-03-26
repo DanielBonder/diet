@@ -21,7 +21,7 @@
             <li><a href="#">נעים להכיר</a></li>
             <li><a href="#">תוכניות</a></li>
             <li><a href="#">תשאלו אותם</a></li>
-            <li><a href="../price/price.php">תפריטים ועוד</a></li>
+            <li><a href="price/price.php">תפריטים ועוד</a></li>
 
 
             <?php if (isset($_SESSION['username'])): ?>
