@@ -1,242 +1,336 @@
 <?php
-    session_start();
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    // בדיקת הרשאות - רק admin
-    if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
-        die("⛔ אין גישה. עמוד זה מיועד רק למנהלים.");
-    }
 
-    require_once 'db.php';
-    $message = "";
 
-    // מצב עריכה
-    $edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : null;
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    die("⛔ אין גישה. עמוד זה מיועד רק למנהלים.");
+}
 
-    // ✅ מחיקת לקוח
-    if (isset($_GET['delete'])) {
-        $id = intval($_GET['delete']);
-        $conn->query("DELETE FROM users WHERE id = $id AND is_admin = 0");
+require_once 'db.php';
+$message = "";
+
+// מצב עריכה
+$edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : null;
+
+// מחיקת לקוח
+if (isset($_GET['delete'])) {
+    $id = intval($_GET['delete']);
+    $conn->query("DELETE FROM users WHERE id = $id AND is_admin = 0");
+    header("Location: manage_customers.php");
+    exit;
+}
+
+// עדכון לקוח
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
+    $id = intval($_POST['id']);
+    $fullName = trim($_POST['full_name']);
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $weight = floatval($_POST['weight']);
+    $height = floatval($_POST['height']);
+    $bmi = $height > 0 ? $weight / pow($height / 100, 2) : null;
+
+    $stmt = $conn->prepare("UPDATE users SET full_name=?, username=?, email=?, weight=?, height=?, bmi=? WHERE id=? AND is_admin=0");
+    $stmt->bind_param("sssdddi", $fullName, $username, $email, $weight, $height, $bmi, $id);
+    if ($stmt->execute()) {
+        $message = "✅ פרטי הלקוח עודכנו בהצלחה!";
         header("Location: manage_customers.php");
         exit;
+    } else {
+        $message = "❌ שגיאה בעדכון: " . $stmt->error;
     }
+    $stmt->close();
+}
 
-    // ✅ עדכון לקוח
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
-        $id = intval($_POST['id']);
-        $fullName = trim($_POST['full_name']);
-        $username = trim($_POST['username']);
-        $email = trim($_POST['email']);
-        $weight = floatval($_POST['weight']);
-        $height = floatval($_POST['height']);
+
+// הוספת לקוח חדש
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_new'])) {
+    $fullName = trim($_POST['full_name']);
+    $userName = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $weight = floatval($_POST['weight']);
+    $height = floatval($_POST['height']);
+
+    if (empty($fullName) || empty($userName) || empty($email) || empty($password) || empty($weight) || empty($height)) {
+        $message = "❗ כל השדות חובה";
+    } else {
         $bmi = $height > 0 ? $weight / pow($height / 100, 2) : null;
 
-        $stmt = $conn->prepare("UPDATE users SET full_name=?, username=?, email=?, weight=?, height=?, bmi=? WHERE id=? AND is_admin=0");
-        $stmt->bind_param("sssdddi", $fullName, $username, $email, $weight, $height, $bmi, $id);
-        if ($stmt->execute()) {
-            $message = "✅ פרטי הלקוח עודכנו בהצלחה!";
-            header("Location: manage_customers.php");
-            exit;
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+        $stmt->bind_param("ss", $userName, $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $message = "⚠️ שם המשתמש או האימייל כבר קיימים במערכת.";
         } else {
-            $message = "❌ שגיאה בעדכון: " . $stmt->error;
+            $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, password, weight, height, bmi, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+            $stmt->bind_param("ssssddd", $fullName, $userName, $email, $password, $weight, $height, $bmi);
+            if ($stmt->execute()) {
+                $message = "✅ לקוח נוסף בהצלחה!";
+                header("Location: manage_customers.php");
+                exit;
+            } else {
+                $message = "❌ שגיאה בהוספה: " . $stmt->error;
+            }
         }
         $stmt->close();
     }
+}
 
-    // ✅ הוספת לקוח חדש
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_new'])) {
-        $fullName = trim($_POST['full_name']);
-        $userName = trim($_POST['username']);
-        $email = trim($_POST['email']);
-        $password = $_POST['password'];
-        $weight = floatval($_POST['weight']);
-        $height = floatval($_POST['height']);
-
-        if (empty($fullName) || empty($userName) || empty($email) || empty($password) || empty($weight) || empty($height)) {
-            $message = "❗ כל השדות חובה";
-        } else {
-            $bmi = $height > 0 ? $weight / pow($height / 100, 2) : null;
-
-            $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-            $stmt->bind_param("ss", $userName, $email);
-            $stmt->execute();
-            $stmt->store_result();
-
-            if ($stmt->num_rows > 0) {
-                $message = "⚠️ שם המשתמש או האימייל כבר קיימים במערכת.";
-            } else {
-                $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, password, weight, height, bmi, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
-                $stmt->bind_param("ssssddd", $fullName, $userName, $email, $password, $weight, $height, $bmi);
-                if ($stmt->execute()) {
-                    $message = "✅ לקוח נוסף בהצלחה!";
-                    header("Location: manage_customers.php");
-                    exit;
-                } else {
-                    $message = "❌ שגיאה בהוספה: " . $stmt->error;
-                }
-            }
-            $stmt->close();
-        }
+// שליפת כל המשתמשים
+// שליפת כל המשתמשים
+$users = [];
+$result = $conn->query("SELECT id, full_name, username, email, weight, height, bmi FROM users WHERE is_admin = 0 ORDER BY id DESC");
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
     }
+}
+$total_customers = count($users);
 
-    // ✅ שליפת כל המשתמשים (לא אדמינים)
-    $users = [];
-    $result = $conn->query("SELECT id, full_name, username, email, weight, height, bmi FROM users WHERE is_admin = 0 ORDER BY id DESC");
-    if ($result && $result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
+// שליפת חובות
+$customersWithDebts = [];
+$sql = "SELECT user_id, SUM(amount) as total FROM payments WHERE status = 'לא שולם' GROUP BY user_id";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $customersWithDebts[$row['user_id']] = $row['total'];
     }
-    ?>
+}
+$total_debt = array_sum($customersWithDebts);
+$customers_in_debt = count($customersWithDebts);
 
-    <!DOCTYPE html>
-    <html lang="he">
-    <head>
-        <meta charset="UTF-8">
-        <title>ניהול לקוחות</title>
-        <style>
-            body {
-                direction: rtl;
-                font-family: Arial, sans-serif;
-                background-color: #f9f9f9;
-                text-align: center;
-                padding: 40px;
-            }
-            .back-button {
-                margin-bottom: 20px;
-            }
-            .back-button a {
-                display: inline-block;
-                padding: 10px 16px;
-                background-color: #28a745;
-                color: white;
-                text-decoration: none;
-                border-radius: 8px;
-                font-weight: bold;
-            }
-            .back-button a:hover {
-                background-color: #218838;
-            }
-            table {
-                width: 90%;
-                margin: 20px auto;
-                border-collapse: collapse;
-                background: white;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            }
-            th, td {
-                padding: 12px;
-                border: 1px solid #ccc;
-            }
-            th {
-                background-color: #ffdb99;
-            }
-            input, button {
-                padding: 8px;
-                margin: 5px;
-            }
-            .message {
-                color: #2e7d32;
-                font-weight: bold;
-            }
-            .actions a, .actions button {
-                margin: 2px;
-                padding: 6px 10px;
-                text-decoration: none;
-                font-size: 14px;
-            }
-            .edit-btn {
-                background-color: #1976d2;
-                color: white;
-                border: none;
-            }
-            .delete-btn {
-                background-color: #d32f2f;
-                color: white;
-                border: none;
-            }
-            .save-btn {
-                background-color: #388e3c;
-                color: white;
-                border: none;
-            }
-            .cancel-btn {
-                background-color: #9e9e9e;
-                color: white;
-                border: none;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="back-button">
-            <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-        </div>
+// לקוחות שמשלמים (גם אם שולם)
+$paying_customers = [];
+$sql = "SELECT DISTINCT user_id FROM payments";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $paying_customers[] = $row['user_id'];
+    }
+}
+$total_paying_customers = count($paying_customers);
 
-        <h1>ניהול לקוחות</h1>
+// פילוח לפי סוג תוכנית תשלום מתוך payments וה־payment_plans
+$menu_counts = [];
+$sql = "SELECT COUNT(DISTINCT user_id) as count, plan_id FROM payments GROUP BY plan_id";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $plan_id = $row['plan_id'];
+        $plan_name_result = $conn->query("SELECT name FROM payment_plans WHERE id = $plan_id");
+        $plan_name = $plan_name_result->fetch_assoc()['name'] ?? "תוכנית $plan_id";
+        $menu_counts[$plan_name] = $row['count'];
+    }
+}
 
-        <?php if (!empty($message)): ?>
-            <div class="message"><?= htmlspecialchars($message) ?></div>
-        <?php endif; ?>
+?>
 
-        <h2>הוספת לקוח חדש</h2>
-        <form method="POST">
-            <input type="text" name="full_name" placeholder="שם מלא" required>
-            <input type="text" name="username" placeholder="שם משתמש" required>
-            <input type="email" name="email" placeholder="אימייל" required>
-            <input type="password" name="password" placeholder="סיסמה" required>
-            <input type="number" name="weight" placeholder="משקל (ק\"ג)" step="0.1" required>
-            <input type="number" name="height" placeholder="גובה (ס\"מ)" step="0.1" required>
-            <button type="submit" name="add_new">➕ הוסף לקוח</button>
-        </form>
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>ניהול לקוחות</title>
+    <style>
+        body {
+            direction: rtl;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 40px;
+        }
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .back-button a {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .back-button a:hover {
+            background-color: #218838;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #ffdb99;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+        .message {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .actions a, .actions button {
+            margin: 2px;
+            padding: 6px 10px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .edit-btn {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+        }
+        .delete-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+        }
+        .save-btn {
+            background-color: #388e3c;
+            color: white;
+            border: none;
+        }
+        .cancel-btn {
+            background-color: #9e9e9e;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
 
-        <h2>רשימת לקוחות</h2>
-        <table>
-            <tr>
-                <th>#</th>
-                <th>שם מלא</th>
-                <th>שם משתמש</th>
-                <th>אימייל</th>
-                <th>משקל</th>
-                <th>גובה</th>
-                <th>BMI</th>
-                <th>פעולות</th>
-            </tr>
-            <?php foreach ($users as $user): ?>
-            <tr>
-                <?php if ($edit_id == $user['id']): ?>
-                <form method="POST">
-                    <td><?= $user['id'] ?></td>
-                    <td><input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>"></td>
-                    <td><input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>"></td>
-                    <td><input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>"></td>
-                    <td><input type="number" name="weight" step="0.1" value="<?= htmlspecialchars($user['weight']) ?>"></td>
-                    <td><input type="number" name="height" step="0.1" value="<?= htmlspecialchars($user['height']) ?>"></td>
-                    <td><?= number_format($user['bmi'], 2) ?></td>
-                    <td class="actions">
-                        <input type="hidden" name="id" value="<?= $user['id'] ?>">
-                        <button type="submit" name="update" class="save-btn">💾 שמור</button>
-                        <a href="manage_customers.php" class="cancel-btn">❌ ביטול</a>
-                    </td>
-                </form>
-                <?php else: ?>
-                    <td><?= $user['id'] ?></td>
-                    <td><?= htmlspecialchars($user['full_name']) ?></td>
-                    <td><?= htmlspecialchars($user['username']) ?></td>
-                    <td><?= htmlspecialchars($user['email']) ?></td>
-                    <td><?= htmlspecialchars($user['weight']) ?></td>
-                    <td><?= htmlspecialchars($user['height']) ?></td>
-                    <td><?= number_format($user['bmi'], 2) ?></td>
-                    <td class="actions">
-                        <a href="manage_customers.php?edit=<?= $user['id'] ?>" class="edit-btn">✏️ ערוך</a>
-                        <a href="manage_customers.php?delete=<?= $user['id'] ?>" class="delete-btn" onclick="return confirm('האם אתה בטוח שברצונך למחוק לקוח זה?')">🗑️ מחק</a>
-                    </td>
-                <?php endif; ?>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </body>
-    </html>
+<div class="back-button">
+    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
+    <button onclick="toggleSummary()" style="margin-bottom: 15px; background-color: #ff9900; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+    📊 סיכום נתונים
+</button>
+
+<div id="summaryBox" style="display: none; margin-bottom: 30px; background: #fff3cd; padding: 20px; border-radius: 10px; width: 400px; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <p><strong>🔢 סה״כ לקוחות:</strong> <?= $total_customers ?></p>
+    <p><strong>💰 סה״כ חובות:</strong> <?= number_format($total_debt, 2) ?> ₪</p>
+    <p><strong>👥 לקוחות עם חוב:</strong> <?= $customers_in_debt ?></p>
+    <p><strong>💳 לקוחות שיש להם תשלומים כלשהם:</strong> <?= $total_paying_customers ?></p>
+    <hr>
+    <p><strong>🍽 לפי סוג תוכנית:</strong></p>
+    <ul style="text-align:right;">
+        <?php foreach ($menu_counts as $plan => $count): ?>
+            <li><?= htmlspecialchars($plan) ?> – <?= $count ?> לקוחות</li>
+        <?php endforeach; ?>
+    </ul>
+</div>
 
 
+
+<?php if (!empty($message)): ?>
+    <div class="message"><?= htmlspecialchars($message) ?></div>
+<?php endif; ?>
+<!-- כפתור לפתיחה/סגירה -->
+<button onclick="toggleCustomerSection()" style="margin-bottom: 15px; background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+    👥 ניהול לקוחות
+</button>
+
+<!-- תוכן הניהול: הוספה + טבלה -->
+<div id="customerSection" style="display: none;">
+
+<button onclick="toggleAddCustomer()" style="margin-bottom: 15px; background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+    ➕ הוספת לקוח חדש
+</button>
+
+<div id="addCustomerBox" style="display: none; margin: 20px auto; width: 400px; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <h2>הוספת לקוח חדש</h2>
+    <form method="POST">
+        <input type="text" name="full_name" placeholder="שם מלא" required>
+        <input type="text" name="username" placeholder="שם משתמש" required>
+        <input type="email" name="email" placeholder="אימייל" required>
+        <input type="password" name="password" placeholder="סיסמה" required>
+        <input type="number" name="weight" placeholder="משקל (ק&quot;ג)" step="0.1" required>
+        <input type="number" name="height" placeholder="גובה (ס&quot;מ)" step="0.1" required>
+        <button type="submit" name="add_new">➕ הוסף לקוח</button>
+    </form>
+</div>
+
+
+    <!-- טבלת לקוחות -->
+    <h2>רשימת לקוחות</h2>
+    <table>
+        <tr>
+            <th>#</th>
+            <th>שם מלא</th>
+            <th>שם משתמש</th>
+            <th>אימייל</th>
+            <th>משקל</th>
+            <th>גובה</th>
+            <th>BMI</th>
+            <th>חוב נוכחי</th>
+            <th>פעולות</th>
+        </tr>
+        <?php foreach ($users as $user): ?>
+        <tr>
+            <?php if ($edit_id == $user['id']): ?>
+            <form method="POST">
+                <td><?= $user['id'] ?></td>
+                <td><input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>"></td>
+                <td><input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>"></td>
+                <td><input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>"></td>
+                <td><input type="number" name="weight" step="0.1" value="<?= htmlspecialchars($user['weight']) ?>"></td>
+                <td><input type="number" name="height" step="0.1" value="<?= htmlspecialchars($user['height']) ?>"></td>
+                <td><?= number_format($user['bmi'], 2) ?></td>
+                <td>—</td>
+                <td class="actions">
+                    <input type="hidden" name="id" value="<?= $user['id'] ?>">
+                    <button type="submit" name="update" class="save-btn">💾 שמור</button>
+                    <a href="manage_customers.php" class="cancel-btn">❌ ביטול</a>
+                </td>
+            </form>
+            <?php else: ?>
+                <td><?= $user['id'] ?></td>
+                <td><?= htmlspecialchars($user['full_name']) ?></td>
+                <td><?= htmlspecialchars($user['username']) ?></td>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+                <td><?= htmlspecialchars($user['weight']) ?></td>
+                <td><?= htmlspecialchars($user['height']) ?></td>
+                <td><?= number_format($user['bmi'], 2) ?></td>
+                <td><?= isset($customersWithDebts[$user['id']]) ? number_format($customersWithDebts[$user['id']], 2) . ' ₪' : '0 ₪' ?></td>
+                <td class="actions">
+                    <a href="manage_customers.php?edit=<?= $user['id'] ?>" class="edit-btn">✏️ ערוך</a>
+                    <a href="manage_customers.php?delete=<?= $user['id'] ?>" class="delete-btn" onclick="return confirm('האם אתה בטוח שברצונך למחוק לקוח זה?')">🗑️ מחק</a>
+                </td>
+            <?php endif; ?>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
+
+
+<script>
+function toggleSummary() {
+    const box = document.getElementById("summaryBox");
+    box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+function toggleAddCustomer() {
+    const box = document.getElementById("addCustomerBox");
+    box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+function toggleCustomerSection() {
+    const section = document.getElementById("customerSection");
+    section.style.display = (section.style.display === "none" || section.style.display === "") ? "block" : "none";
+}
+
+
+</script>
+
+</body>
+</html>

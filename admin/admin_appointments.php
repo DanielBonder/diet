@@ -160,61 +160,85 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
+    <div class="back-button">
+        <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
+    </div>
 
-<h2>ניהול פגישות</h2>
+<button onclick="toggleAppointments()" style="margin-bottom: 20px;">📅 הפגישות שלי</button>
 
-<div class="back-button">
-    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-</div>
+<div id="appointmentsSection" style="display: none;">
+    <!-- כל הקוד ששלחת מכאן 👇 -->
+    
+    <h2>ניהול פגישות</h2>
 
-<?php if ($message): ?>
-    <div class="message"><?= htmlspecialchars($message) ?></div>
-<?php endif; ?>
 
-<div class="actions">
-    <a href="admin_appointments.php?new=1" class="button">➕ הוסף פגישה חדשה</a>
-</div>
+    <?php if ($message): ?>
+        <div class="message"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
 
-<?php if ($show_form): ?>
-<form method="POST">
-    <input type="hidden" name="id" value="<?= $edit_data['id'] ?? '' ?>">
-    <input type="text" name="full_name" placeholder="שם מלא" value="<?= $edit_data['full_name'] ?? '' ?>" required>
-    <input type="date" name="available_date" value="<?= $edit_data['available_date'] ?? '' ?>" min="<?= date('Y-m-d') ?>" required>
-    <input type="time" name="available_time" value="<?= $edit_data['available_time'] ?? '' ?>" required>
-    <select name="meeting_type" required>
-        <option value="">-- סוג פגישה --</option>
-        <option value="initial" <?= (isset($edit_data['meeting_type']) && $edit_data['meeting_type'] === 'initial') ? 'selected' : '' ?>>פגישה ראשונית</option>
-        <option value="weekly" <?= (isset($edit_data['meeting_type']) && $edit_data['meeting_type'] === 'weekly') ? 'selected' : '' ?>>שקילה שבועית</option>
-    </select>
-    <button type="submit"><?= $edit_data ? 'עדכן פגישה' : 'הוסף פגישה' ?></button>
-</form>
-<?php endif; ?>
+    <div class="actions">
+        <a href="admin_appointments.php?new=1" class="button">➕ הוסף פגישה חדשה</a>
+    </div>
 
-<?php if ($result && $result->num_rows > 0): ?>
-    <table>
-        <tr>
-            <th>שם משתמש</th>
-            <th>תאריך</th>
-            <th>שעה</th>
-            <th>נקבע בתאריך</th>
-            <th>פעולות</th>
-        </tr>
-        <?php while ($row = $result->fetch_assoc()): ?>
+    <?php if ($show_form): ?>
+    <form method="POST">
+        <input type="hidden" name="id" value="<?= $edit_data['id'] ?? '' ?>">
+        <input type="text" name="full_name" placeholder="שם מלא" value="<?= $edit_data['full_name'] ?? '' ?>" required>
+        <input type="date" name="available_date" value="<?= $edit_data['available_date'] ?? '' ?>" min="<?= date('Y-m-d') ?>" required>
+        <input type="time" name="available_time" value="<?= $edit_data['available_time'] ?? '' ?>" required>
+        <select name="meeting_type" required>
+            <option value="">-- סוג פגישה --</option>
+            <option value="initial" <?= (isset($edit_data['meeting_type']) && $edit_data['meeting_type'] === 'initial') ? 'selected' : '' ?>>פגישה ראשונית</option>
+            <option value="weekly" <?= (isset($edit_data['meeting_type']) && $edit_data['meeting_type'] === 'weekly') ? 'selected' : '' ?>>שקילה שבועית</option>
+        </select>
+        <button type="submit"><?= $edit_data ? 'עדכן פגישה' : 'הוסף פגישה' ?></button>
+        <a href="admin_appointments.php" class="button danger" style="margin-top: 10px; display: inline-block;">❌ סגור</a>
+    </form>
+    <?php endif; ?>
+
+    <?php if ($result && $result->num_rows > 0): ?>
+        <table>
             <tr>
-                <td><?= htmlspecialchars($row['full_name']) ?></td>
-                <td><?= date("d/m/Y", strtotime($row['available_date'])) ?></td>
-                <td><?= substr($row['available_time'], 0, 5) ?></td>
-                <td><?= date("d/m/Y H:i", strtotime($row['created_at'])) ?></td>
-                <td>
-                    <a href="admin_appointments.php?edit=<?= $row['id'] ?>" class="button">✏️ ערוך</a>
-                    <a href="admin_appointments.php?delete=<?= $row['id'] ?>" class="button danger" onclick="return confirm('האם אתה בטוח שברצונך למחוק את הפגישה?');">🗑️ מחק</a>
-                </td>
+                <th>שם משתמש</th>
+                <th>תאריך</th>
+                <th>שעה</th>
+                <th>נקבע בתאריך</th>
+                <th>פעולות</th>
             </tr>
-        <?php endwhile; ?>
-    </table>
-<?php else: ?>
-    <p>אין פגישות שנקבעו עדיין.</p>
-<?php endif; ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['full_name']) ?></td>
+                    <td><?= date("d/m/Y", strtotime($row['available_date'])) ?></td>
+                    <td><?= substr($row['available_time'], 0, 5) ?></td>
+                    <td><?= date("d/m/Y H:i", strtotime($row['created_at'])) ?></td>
+                    <td>
+                        <a href="admin_appointments.php?edit=<?= $row['id'] ?>" class="button">✏️ ערוך</a>
+                        <a href="admin_appointments.php?delete=<?= $row['id'] ?>" class="button danger" onclick="return confirm('האם אתה בטוח שברצונך למחוק את הפגישה?');">🗑️ מחק</a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </table>
+    <?php else: ?>
+        <p>אין פגישות שנקבעו עדיין.</p>
+    <?php endif; ?>
+</div>
+<!-- קישור לדף אחר -->
+<a href="add_availability.php" style="margin-bottom: 10px; display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
+    ➕ עבור להזנת זמינות
+</a>
+
+
+<script>
+function toggleAppointments() {
+    const section = document.getElementById("appointmentsSection");
+    if (section.style.display === "none" || section.style.display === "") {
+        section.style.display = "block";
+    } else {
+        section.style.display = "none";
+    }
+}
+</script>
+
 
 </body>
 </html>

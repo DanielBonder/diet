@@ -62,3 +62,14 @@ INSERT INTO payment_plans (name, duration_months, price) VALUES
 ('ליווי חודשי', 1, 650),
 ('ליווי ל-3 חודשים', 3, 1350),
 ('ליווי ל-6 חודשים', 6, 2400);
+
+
+CREATE TABLE user_menus (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    day_of_week ENUM('ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'),
+    meal_description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+ALTER TABLE user_meals_actual ADD COLUMN comment TEXT;

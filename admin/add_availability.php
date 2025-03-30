@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <div class="back-button">
-    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
+    <a href="admin_appointments.php">⬅️ חזרה ליומן</a>
 </div>
 
 <form method="POST">
