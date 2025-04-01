@@ -208,17 +208,62 @@ if ($result) {
             color: white;
             border: none;
         }
+
+body {
+    padding-top: 80px; /* גובה ה־sidebar – תוכל להתאים לפי הצורך */
+}
+
+#summaryBox {
+    display: none;
+    background-color: #ffffff;  
+    margin: 20px auto;
+    border-radius: 12px;
+    width: 400px;
+    text-align: right;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.4s ease, box-shadow 0.3s ease;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+
+#summaryBox.active {
+    background-color: #f8f9fa; /* רקע פתוח */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+body.default-bg {
+    background-color: #f0f0f0;
+    transition: background-color 0.5s ease;
+}
+
+body.summary-bg {
+    background-color: #e0f7fa; /* תכלת מודרני */
+}
+
+body.customers-bg {
+    background-color: #f1f8e9; /* ירקרק רך */
+}
+
+body.add-bg {
+    background-color: #fff3e0; /* קרמי-כתום בהיר */
+}
+
+.button-active {
+    background-color: #6c757d !important; /* אפור מודרני */
+    color: white !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s ease;
+}
+
+
     </style>
 </head>
 <body>
 
-<div class="back-button">
-    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-    <button onclick="toggleSummary()" style="margin-bottom: 15px; background-color: #ff9900; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
-    📊 סיכום נתונים
-</button>
 
-<div id="summaryBox" style="display: none; margin-bottom: 30px; background: #fff3cd; padding: 20px; border-radius: 10px; width: 400px; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+<div id="summaryBox" style="display: none;">
     <p><strong>🔢 סה״כ לקוחות:</strong> <?= $total_customers ?></p>
     <p><strong>💰 סה״כ חובות:</strong> <?= number_format($total_debt, 2) ?> ₪</p>
     <p><strong>👥 לקוחות עם חוב:</strong> <?= $customers_in_debt ?></p>
@@ -238,31 +283,9 @@ if ($result) {
     <div class="message"><?= htmlspecialchars($message) ?></div>
 <?php endif; ?>
 <!-- כפתור לפתיחה/סגירה -->
-<button onclick="toggleCustomerSection()" style="margin-bottom: 15px; background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
-    👥 ניהול לקוחות
-</button>
 
-<!-- תוכן הניהול: הוספה + טבלה -->
+
 <div id="customerSection" style="display: none;">
-
-<button onclick="toggleAddCustomer()" style="margin-bottom: 15px; background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
-    ➕ הוספת לקוח חדש
-</button>
-
-<div id="addCustomerBox" style="display: none; margin: 20px auto; width: 400px; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-    <h2>הוספת לקוח חדש</h2>
-    <form method="POST">
-        <input type="text" name="full_name" placeholder="שם מלא" required>
-        <input type="text" name="username" placeholder="שם משתמש" required>
-        <input type="email" name="email" placeholder="אימייל" required>
-        <input type="password" name="password" placeholder="סיסמה" required>
-        <input type="number" name="weight" placeholder="משקל (ק&quot;ג)" step="0.1" required>
-        <input type="number" name="height" placeholder="גובה (ס&quot;מ)" step="0.1" required>
-        <button type="submit" name="add_new">➕ הוסף לקוח</button>
-    </form>
-</div>
-
-
     <!-- טבלת לקוחות -->
     <h2>רשימת לקוחות</h2>
     <table>
@@ -312,23 +335,99 @@ if ($result) {
         </tr>
         <?php endforeach; ?>
     </table>
+        <!-- כפתור תת-פעולה: הוספת לקוח חדש -->
+        <button id="addBtn" onclick="toggleAddCustomer(); activateButton('addBtn')">
+        ➕ הוספת לקוח חדש
+    </button>
+        <!-- טופס הוספת לקוח (מוסתר כברירת מחדל) -->
+        <div id="addCustomerBox" style="display: none; margin: 20px auto; width: 400px; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <h2>הוספת לקוח חדש</h2>
+        <form method="POST">
+            <input type="text" name="full_name" placeholder="שם מלא" required>
+            <input type="text" name="username" placeholder="שם משתמש" required>
+            <input type="email" name="email" placeholder="אימייל" required>
+            <input type="password" name="password" placeholder="סיסמה" required>
+            <input type="number" name="weight" placeholder="משקל (ק&quot;ג)" step="0.1" required>
+            <input type="number" name="height" placeholder="גובה (ס&quot;מ)" step="0.1" required>
+            <button type="submit" name="add_new">➕ הוסף לקוח</button>
+        </form>
+        
+    </div>
+
+
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
+window.addEventListener("message", function(event) {
+    if (event.data === "toggleCustomerArea" && typeof toggleCustomerArea === "function") {
+        toggleCustomerArea();
+    }
+
+    if (event.data === "toggleSummary" && typeof toggleSummary === "function") {
+        toggleSummary();
+    }
+});
+
 function toggleSummary() {
-    const box = document.getElementById("summaryBox");
-    box.style.display = (box.style.display === "none") ? "block" : "none";
+    $("#summaryBox").slideToggle("slow", function () {
+        if ($(this).is(":visible")) {
+            clearBodyBackground();
+            $("body").addClass("summary-bg");
+        } else {
+            clearBodyBackground();
+        }
+    });
 }
+
+
 function toggleAddCustomer() {
-    const box = document.getElementById("addCustomerBox");
-    box.style.display = (box.style.display === "none") ? "block" : "none";
+    $("#addCustomerBox").slideToggle("slow", function () {
+        if ($(this).is(":visible")) {
+            clearBodyBackground();
+            $("body").addClass("add-bg");
+        } else {
+            clearBodyBackground();
+        }
+    });
 }
+
+
 function toggleCustomerSection() {
     const section = document.getElementById("customerSection");
     section.style.display = (section.style.display === "none" || section.style.display === "") ? "block" : "none";
 }
 
+function toggleCustomerMenu() {
+    const submenu = document.getElementById("customerSubmenu");
+    submenu.style.display = (submenu.style.display === "none" || submenu.style.display === "") ? "flex" : "none";
+}
+
+function toggleCustomerArea() {
+    $("#customerSection").slideToggle("slow", function () {
+        if ($(this).is(":visible")) {
+            clearBodyBackground();
+            $("body").addClass("customers-bg");
+        } else {
+            clearBodyBackground();
+        }
+
+        // סגור גם את טופס ההוספה אם פתוח
+        if (!$(this).is(":visible")) {
+            $("#addCustomerBox").slideUp("fast");
+        }
+    });
+}
+
+function clearBodyBackground() {
+    $("body").removeClass("summary-bg customers-bg add-bg").addClass("default-bg");
+}
+
+function activateButton(buttonId) {
+    $(".sidebar button").removeClass("button-active");
+    $(`#${buttonId}`).addClass("button-active");
+}
 
 </script>
 

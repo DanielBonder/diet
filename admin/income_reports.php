@@ -63,9 +63,6 @@ while ($row = $result->fetch_assoc()) {
     </style>
 </head>
 <body>
-<div class="back-button">
-    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-</div>
 
 <h1>📈 דוח הכנסות</h1>
 

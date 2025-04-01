@@ -156,10 +156,6 @@ if ($actual_result && $actual_result->num_rows > 0) {
     </style>
 </head>
 <body>
-<div class="dashboard-button">
-    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-</div>
-
 <button onclick="toggleMenuForm()" style="margin-bottom: 15px;">📋 הקצה תפריט שבועי</button>
 
 <div id="menuForm" style="display: none;">

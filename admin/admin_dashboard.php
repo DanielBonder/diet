@@ -15,91 +15,140 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['
     <style>
         body {
             direction: rtl;
+            margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #f8f8f8, #e0e0e0);
-            text-align: center;
-            padding: 60px;
         }
-        h1 {
-            margin-bottom: 40px;
-        }
-        .dashboard {
+
+        .container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
+            height: 100vh;
         }
-        .card {
-            background-color: white;
-            padding: 30px 40px;
-            border-radius: 16px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.expanded {
             width: 280px;
-            transition: transform 0.2s ease-in-out;
         }
-        .card:hover {
-            transform: scale(1.05);
-        }
-        .card h2 {
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-        .card a {
-            text-decoration: none;
-            background-color: #ffa500;
+
+        .sidebar button, .sidebar a.logout {
+            background-color: transparent;
+            border: none;
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .card a:hover {
-            background-color: #e69500;
-        }
-        .top-bar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-        .top-bar a {
+            font-size: 16px;
+            text-align: right;
+            cursor: pointer;
+            padding: 10px;
+            transition: background 0.3s;
             text-decoration: none;
-            background-color: #007BFF;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
         }
-        .top-bar a:hover {
-            background-color: #0056b3;
+
+        .sidebar button:hover, .sidebar a.logout:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .submenu {
+            display: none;
+            flex-direction: column;
+            padding-right: 10px;
+            gap: 10px;
+        }
+
+        .submenu button {
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        iframe {
+            width: 100%;
+            height: 90vh;
+            border: none;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            margin-top: 0;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <button onclick="toggleSubmenu('appointmentsSubmenu')">📅 תורים</button>
+            <div id="appointmentsSubmenu" class="submenu">
+                <button onclick="loadPage('admin_appointments.php')">✅ פגישות שלי</button>
+                <button onclick="loadPage('add_availability.php')">➕ הוסף פגישה חדשה</button>
+            </div>
 
-    <div class="top-bar">
-        <a href="login admin/login_admin.html">התנתק</a>
-    </div>
+            <button onclick="toggleSubmenu('customersSubmenu')">👥 ניהול לקוחות</button>
+            <div id="customersSubmenu" class="submenu">
+            <button onclick="loadPage('manage_customers.php')">📄 רשימת לקוחות</button>
+            <button onclick="loadPage('manage_customers.php', 'toggleSummary')">📊 סיכום נתונים</button>
+            </div>
 
-    <h1>לוח ניהול - ברוך הבא <?= htmlspecialchars($_SESSION['full_name']) ?></h1>
-
-    <div class="dashboard">
-
-        <div class="card">
-            <h2>צפייה בפגישות שנקבעו</h2>
-            <a href="admin_appointments.php">הצג תורים</a>
+            <button onclick="loadPage('assign_payment_plan.php')">💳 הקצאת תשלום</button>
+            <button onclick="loadPage('admin_assign_menu.php')">🍽 הקצאת תפריט</button>
+            <a href="login admin/login_admin.html" class="logout">🚪 התנתק</a>
         </div>
 
-        <div class="card">
-            <h2>ניהול לקוחות</h2>
-            <a href="manage_customers.php">נהל לקוחות</a>
-        </div>
-        <div class="card">
-            <h2>הקצאת תשלום</h2>
-            <a href="assign_payment_plan.php">הקצה תשלום</a>
-        </div>
-        <div class="card">
-            <h2>הקצאת תפריט למשתמש </h2>
-            <a href="admin_assign_menu.php">הקצה תפריט</a>
+        <div class="main-content">
+            <h1>ברוך הבא <?= htmlspecialchars($_SESSION['full_name']) ?></h1>
+            <iframe id="contentFrame" src=""></iframe>
         </div>
     </div>
+
+    <script>
+function loadPage(pageUrl, message = null) {
+    const iframe = document.getElementById("contentFrame");
+    iframe.src = pageUrl;
+
+    iframe.onload = function () {
+        if (pageUrl === 'admin_appointments.php') {
+            iframe.contentWindow.postMessage("toggleAppointments", "*");
+        } else if (pageUrl === 'manage_customers.php') {
+            if (!message || message === "toggleCustomerArea") {
+                // שלח רק toggleCustomerArea כברירת מחדל
+                iframe.contentWindow.postMessage("toggleCustomerArea", "*");
+            } else if (message === "toggleSummary") {
+                // שלח רק toggleSummary בלי לפתוח גם לקוחות
+                iframe.contentWindow.postMessage("toggleSummary", "*");
+            }
+        } else if (message) {
+            iframe.contentWindow.postMessage(message, "*");
+        }
+    };
+}
+
+
+        function toggleSubmenu(id) {
+            const submenu = document.getElementById(id);
+            const sidebar = document.getElementById("sidebar");
+            const isVisible = submenu.style.display === "flex";
+
+            submenu.style.display = isVisible ? "none" : "flex";
+            if (!isVisible) {
+                sidebar.classList.add("expanded");
+            } else {
+                sidebar.classList.remove("expanded");
+            }
+        }
+    </script>
 </body>
 </html>

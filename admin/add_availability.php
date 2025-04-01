@@ -141,10 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="message"><?= htmlspecialchars($message) ?></div>
 <?php endif; ?>
 
-<div class="back-button">
-    <a href="admin_appointments.php">⬅️ חזרה ליומן</a>
-</div>
-
+ 
 <form method="POST">
     <label for="start_date">תאריך התחלה:</label>
     <input type="date" name="start_date" id="start_date" required>

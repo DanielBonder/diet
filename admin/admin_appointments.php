@@ -157,17 +157,74 @@ $result = $conn->query($sql);
         .back-button a:hover {
             background-color: #218838;
         }
+        .sidebar {
+    position: fixed;
+    top: 40px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.sidebar .button,
+.sidebar button {
+    width: 200px;
+    text-align: right;
+}
+
+.button.green {
+    background-color: #28a745;
+}
+.button.green:hover {
+    background-color: #218838;
+}
+#availabilityPanel {
+  display: none;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  padding: 30px;
+  margin: 30px auto;
+  width: 450px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  text-align: right;
+  overflow: auto;
+  max-height: 90vh;
+}
+
+#availabilityPanel label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  text-align: right;
+}
+
+#availabilityPanel input,
+#availabilityPanel button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+
     </style>
 </head>
 <body>
-    <div class="back-button">
-        <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-    </div>
 
-<button onclick="toggleAppointments()" style="margin-bottom: 20px;">📅 הפגישות שלי</button>
+
+
+
 
 <div id="appointmentsSection" style="display: none;">
-    <!-- כל הקוד ששלחת מכאן 👇 -->
     
     <h2>ניהול פגישות</h2>
 
@@ -176,10 +233,8 @@ $result = $conn->query($sql);
         <div class="message"><?= htmlspecialchars($message) ?></div>
     <?php endif; ?>
 
-    <div class="actions">
-        <a href="admin_appointments.php?new=1" class="button">➕ הוסף פגישה חדשה</a>
-    </div>
 
+    
     <?php if ($show_form): ?>
     <form method="POST">
         <input type="hidden" name="id" value="<?= $edit_data['id'] ?? '' ?>">
@@ -222,13 +277,17 @@ $result = $conn->query($sql);
         <p>אין פגישות שנקבעו עדיין.</p>
     <?php endif; ?>
 </div>
-<!-- קישור לדף אחר -->
-<a href="add_availability.php" style="margin-bottom: 10px; display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
-    ➕ עבור להזנת זמינות
-</a>
 
 
+
+<!-- סקריפט לפונקציית הפגישות -->
 <script>
+    window.addEventListener("message", function(event) {
+        if (event.data === "toggleAppointments") {
+            toggleAppointments();
+        }
+    });
+
 function toggleAppointments() {
     const section = document.getElementById("appointmentsSection");
     if (section.style.display === "none" || section.style.display === "") {
@@ -238,6 +297,38 @@ function toggleAppointments() {
     }
 }
 </script>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- סקריפט לסלייד של טופס זמינות -->
+<script>
+$(document).ready(function(){
+  $("#openAvailability").click(function(){
+    $("#availabilityPanel").slideToggle("slow");
+  });
+});
+</script>
+
+<div id="availabilityPanel">
+    <form method="POST" action="add_availability.php">
+        <h3>הוספת זמינות לפי טווח תאריכים</h3>
+
+        <label for="start_date">תאריך התחלה:</label>
+        <input type="date" name="start_date" id="start_date" required>
+
+        <label for="end_date">תאריך סיום:</label>
+        <input type="date" name="end_date" id="end_date" required>
+
+        <label for="start_time">שעת התחלה:</label>
+        <input type="time" name="start_time" id="start_time" required>
+
+        <label for="end_time">שעת סיום:</label>
+        <input type="time" name="end_time" id="end_time" required>
+
+        <button type="submit" class="button green">הוסף זמינות</button>
+    </form>
+</div>
 
 
 </body>
