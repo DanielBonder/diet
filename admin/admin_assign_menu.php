@@ -156,7 +156,6 @@ if ($actual_result && $actual_result->num_rows > 0) {
     </style>
 </head>
 <body>
-<button onclick="toggleMenuForm()" style="margin-bottom: 15px;">📋 הקצה תפריט שבועי</button>
 
 <div id="menuForm" style="display: none;">
     <h2>הקצאת תפריט שבועי למשתמש</h2>
@@ -194,7 +193,6 @@ if ($actual_result && $actual_result->num_rows > 0) {
     </form>
 </div>
 
-<button onclick="toggleActualMeals()" style="margin: 20px 0;">👀 הצג/הסתר מה המשתמשים אכלו בפועל</button>
 
 <div id="actualMealsSection" style="display: none;">
     <h2>🍽️ מה המשתמשים אכלו בפועל</h2>
@@ -264,18 +262,25 @@ if ($actual_result && $actual_result->num_rows > 0) {
 </div>
 
 <script>
-    function toggleMenuForm() {
-        const form = document.getElementById('menuForm');
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-    function toggleActualMeals() {
-        const section = document.getElementById('actualMealsSection');
-        section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    }
+
     function toggleFilter() {
         const filter = document.getElementById('filterForm');
         filter.style.display = filter.style.display === 'none' ? 'block' : 'none';
     }
+    window.addEventListener("message", function(event) {
+    if (event.data === "toggleMenuForm") {
+        const form = document.getElementById('menuForm');
+        if (form) form.style.display = 'block';
+    } else if (event.data === "toggleActualMeals") {
+        const section = document.getElementById('actualMealsSection');
+        if (section) section.style.display = 'block';
+    } else if (event.data === "darken") {
+        document.body.style.backgroundColor = "#2a2a2a";
+        document.body.style.color = "white";
+    }
+});
+
+
 
 </script>
 

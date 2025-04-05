@@ -122,91 +122,138 @@ if ($result && $result->num_rows > 0) {
     <meta charset="UTF-8">
     <title>ניהול תשלומים</title>
     <style>
-        body {
-            direction: rtl;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 30px;
-        }
-        h2 {
-            text-align: center;
-        }
-        form, table {
-            background: white;
-            padding: 5px;
-            margin: 20px auto;
-            border-radius: 10px;
-            width: 95%;
-            max-width: 1000px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        label, select, button, input[type="date"], input[type="number"] {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            font-size: 15px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        table {
-            border-collapse: collapse;
-            table-layout: fixed;
-            word-wrap: break-word;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
-            vertical-align: middle;
-        }
-        th {
-            background-color: #e8e8e8;
-        }
-        .message {
-            text-align: center;
-            color: #2e7d32;
-            font-weight: bold;
-        }
-        .dashboard-button {
-            display: block;
-            text-align: center;
-            margin: 20px auto;
-        }
-        .dashboard-button a {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-        .dashboard-button a:hover {
-            background-color: #218838;
-        }
-        .inline-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .small-button {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 5px;
+    body {
+        direction: rtl;
+        font-family: Arial, sans-serif;
+        padding: 30px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    body.darken-bg {
+    background-color: #2a2a2a !important;
+    color: white !important;
 }
 
+body.darken-bg form,
+body.darken-bg table,
+body.darken-bg input,
+body.darken-bg select,
+body.darken-bg textarea {
+    background-color: #3a3a3a !important;
+    color: white !important;
+    border-color: #555;
+}
 
-    </style>
+body.darken-bg th {
+    background-color: #444 !important;
+    color: white;
+}
+    h2 {
+        text-align: center;
+    }
+
+    form, table {
+        background: white;
+        padding: 5px;
+        margin: 20px auto;
+        border-radius: 10px;
+        width: 95%;
+        max-width: 1000px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    body.darken-bg form,
+    body.darken-bg table {
+        background: #3a3a3a;
+        color: white;
+    }
+
+    label, select, button, input[type="date"], input[type="number"] {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: center;
+        vertical-align: middle;
+        transition: background-color 0.3s ease;
+    }
+
+    th {
+        background-color: #e8e8e8;
+    }
+
+    body.darken-bg th {
+        background-color: #444;
+        color: white;
+    }
+
+    .message {
+        text-align: center;
+        color: #2e7d32;
+        font-weight: bold;
+    }
+
+    .dashboard-button {
+        display: block;
+        text-align: center;
+        margin: 20px auto;
+    }
+
+    .dashboard-button a {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .dashboard-button a:hover {
+        background-color: #218838;
+    }
+
+    .inline-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .small-button {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 5px;
+    }
+</style>
+
 </head>
-<body>
+<body class="default-bg">
 
 <h2>📩 הקצאת תוכנית תשלום</h2>
 
@@ -280,6 +327,19 @@ if ($result && $result->num_rows > 0) {
         <?php endif; ?>
     <?php endforeach; ?>
 </table>
+<script>
+window.addEventListener("message", function(event) {
+    if (event.data === "darken") {
+        document.body.classList.add("darken-bg");
+    } else if (event.data === "lighten") {
+        document.body.classList.remove("darken-bg");
+    }
+});
+</script>
+
+
+
+
 
 </body>
 </html>
