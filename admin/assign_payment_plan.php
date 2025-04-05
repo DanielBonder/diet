@@ -208,10 +208,6 @@ if ($result && $result->num_rows > 0) {
 </head>
 <body>
 
-<div class="dashboard-button">
-    <a href="admin_dashboard.php">⬅️ חזרה לדשבורד</a>
-</div>
-
 <h2>📩 הקצאת תוכנית תשלום</h2>
 
 <?php if (!empty($message)): ?>
