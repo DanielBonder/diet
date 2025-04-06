@@ -111,22 +111,209 @@ while ($row = $result->fetch_assoc()) {
         small {
             color: gray;
         }
+/* Reset and base styles */
+.header-container {
+    direction: rtl;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.welcome-message h2 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+/* Unified button styling with explicit height control */
+.header-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #3498db;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-family: inherit;
+    line-height: 1.5;
+    box-sizing: border-box;
+    text-align: center;
+    height: 40px; /* Fixed height */
+    min-width: 120px; /* Minimum width */
+}
+
+/* Button reset */
+button.header-button {
+    appearance: none;
+    -webkit-appearance: none;
+    /* Additional button-specific resets */
+    margin: 0;
+    overflow: visible;
+    text-transform: none;
+}
+
+/* Anchor tag specific adjustments */
+a.header-button {
+    /* Ensure anchor tags don't have any extra spacing */
+    vertical-align: middle;
+    /* Match button's line-height behavior */
+    white-space: nowrap;
+}
+
+.header-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific button colors */
+.header-button.appointments-btn { background-color: #2ecc71; }
+.header-button.menu-btn { background-color: #e74c3c; }
+.header-button.payment-btn { background-color: #9b59b6; }
+.header-button.home-btn { background-color: #34495e; }
+
+.header-button:active {
+    transform: translateY(0);
+}
+
+.icon {
+    font-size: 1.1rem;
+}
+
+/* Add padding to body */
+body {
+    padding-top: 120px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+    
+    .welcome-message h2 {
+        font-size: 1.3rem;
+        text-align: center;
+    }
+    
+    .header-buttons {
+        justify-content: center;
+    }
+    
+    .header-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        height: 36px; /* Slightly smaller on mobile */
+        min-width: 100px;
+    }
+
+    body {
+        padding-top: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .header-button {
+        width: 100%;
+        height: 42px; /* Taller for touch targets */
+    }
+
+    body {
+        padding-top: 180px;
+    }
+}
+/* Overlay Styles */
+.overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   z-index: 900;
+   display: none;
+}
+
+/* Active section with overlay effect */
+.section-active {
+   position: relative;
+   z-index: 950;
+   animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+   from { opacity: 0; }
+   to { opacity: 1; }
+}
     </style>
 </head>
 <body>
-<div style="text-align: left; margin-bottom: 20px;">
-    <a href="../home.php" style="text-decoration: none; background-color: #007bff; color: white; padding: 10px 20px; border-radius: 8px;">⬅ חזרה ל־Home</a>
-</div>
-
-<h2>שלום <?= htmlspecialchars($full_name) ?>, ברוך הבא לאזור האישי שלך</h2>
+<div id="pageOverlay" class="overlay"></div>
 
 <?php if (isset($_SESSION['meal_message'])): ?>
     <div class="message"><?= $_SESSION['meal_message'] ?></div>
     <?php unset($_SESSION['meal_message']); ?>
 <?php endif; ?>
-<button onclick="toggleSection('appointmentsSection')">📅 הפגישות שלי</button>
 
-<div id="appointmentsSection" style="display: none; margin-top: 20px;">
+<div class="header-container">
+    <div class="header">
+        <div class="welcome-message">
+            <h2>שלום <?= htmlspecialchars($full_name) ?>, ברוך הבא לאזור האישי שלך</h2>
+        </div>
+        <div class="header-buttons">
+            <button class="header-button appointments-btn" onclick="showSection('appointmentsSection')">
+                <span class="icon">📅</span>
+                <span class="text">פגישות</span>
+            </button>
+            <button class="header-button menu-btn" onclick="showSection('menuSection')">
+                <span class="icon">🍽️</span>
+                <span class="text">תפריט</span>
+            </button>
+            <button class="header-button payment-btn" onclick="showSection('paymentSection')">
+                <span class="icon">💳</span>
+                <span class="text">תשלום</span>
+            </button>
+            <a class="header-button home-btn" href="../home.php">
+                <span class="icon">⬅</span>
+                <span class="text">חזרה ל־Home</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div id="appointmentsSection" style="margin-top: 20px;">
     <section>
         <h3>📅 הפגישות שלך:</h3>
         <?php
@@ -144,11 +331,9 @@ while ($row = $result->fetch_assoc()) {
     </section>
 </div>
 
-<button onclick="toggleSection('menuSection')" style="background-color:#28a745; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top: 20px;">
-    🍽️ הצג/הסתר תפריט שבועי
-</button>
+ 
 
-<div id="menuSection" style="display: none; margin-top: 20px;">
+<div id="menuSection" style="margin-top: 20px;">
     <section>
         <h3>🍽️ התפריט השבועי שלך:</h3>
         <form method="GET">
@@ -190,11 +375,8 @@ while ($row = $result->fetch_assoc()) {
 </div>
 
 
-<button onclick="toggleSection('paymentSection')" style="background-color:#28a745; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top: 20px;">
-    💳 הצג/הסתר מצב תשלום
-</button>
-
-<div id="paymentSection" style="display: none; margin-top: 20px;">
+ 
+<div id="paymentSection" style="margin-top: 20px;">
     <section>
         <h3>💳 מצב תשלום:</h3>
         <?php
@@ -232,17 +414,63 @@ while ($row = $result->fetch_assoc()) {
             <button type="submit">📩 בקש תוכנית</button>
         </form>
     </section>
+    </div>
 </div>
-
 <script>
-function toggleSection(id) {
-    var section = document.getElementById(id);
-    if (section.style.display === 'none') {
-        section.style.display = 'block';
-    } else {
-        section.style.display = 'none';
+document.addEventListener('DOMContentLoaded', function() {
+    // הסתר את כל הסקשנים כברירת מחדל
+    var sections = ['appointmentsSection', 'menuSection', 'paymentSection'];
+    sections.forEach(function(id) {
+        var section = document.getElementById(id);
+        if (section) {
+            section.style.display = 'none';
+        }
+    });
+});
+
+function showSection(sectionId) {
+    // הסתר את כל הסקשנים
+    var sections = ['appointmentsSection', 'menuSection', 'paymentSection'];
+    sections.forEach(function(id) {
+        var section = document.getElementById(id);
+        if (section) {
+            section.style.display = 'none';
+            section.querySelector('section').classList.remove('section-active');
+        }
+    });
+
+    // הצג את האוברליי
+    var overlay = document.getElementById('pageOverlay');
+    overlay.style.display = 'block';
+
+    // הצג את הסקשן שנבחר
+    var selectedSection = document.getElementById(sectionId);
+    if (selectedSection) {
+        selectedSection.style.display = 'block';
+        selectedSection.querySelector('section').classList.add('section-active');
+        
+        // הוסף אפקט הנפשה לסקשן
+        setTimeout(function() {
+            selectedSection.scrollIntoView({behavior: 'smooth'});
+        }, 100);
     }
+    
+    // הוסף אפשרות לסגור את האוברליי בלחיצה
+    overlay.onclick = function() {
+        sections.forEach(function(id) {
+            var section = document.getElementById(id);
+            if (section) {
+                section.style.display = 'none';
+                if (section.querySelector('section')) {
+                    section.querySelector('section').classList.remove('section-active');
+                }
+            }
+        });
+        this.style.display = 'none';
+    };
 }
+
+ 
 </script>
 
 </body>
