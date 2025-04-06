@@ -327,15 +327,7 @@ body.darken-bg th {
         <?php endif; ?>
     <?php endforeach; ?>
 </table>
-<script>
-window.addEventListener("message", function(event) {
-    if (event.data === "darken") {
-        document.body.classList.add("darken-bg");
-    } else if (event.data === "lighten") {
-        document.body.classList.remove("darken-bg");
-    }
-});
-</script>
+
 
 
 

@@ -127,37 +127,54 @@ h1 {
     text-decoration: none;
     border-radius: 5px;
 }
+.menu-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+  }
 
-/* שכבת אפור */
-#overlay {
+  .menu-button:hover {
+    background-color: #0056b3;
+  }
+
+  .overlay-background {
     display: none;
     position: fixed;
-    top: 0;
-    right: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 5;
-}
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
 
-/* מצב רקע כהה */
-body.dark-background {
-    background-color: #2a2a2a;
-    color: white;
-    transition: background-color 0.5s ease;
-}
+  .submenu-popover {
+    position: absolute;
+    background-color: #343a40;
+    color: white;     
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1100;
+    direction: rtl;
+    min-width: 200px;
+  }
 
-body.dark-background .sidebar {
-    background-color: #2a2a2a;
-}
+  .submenu-popover .menu-button {
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: right;
+  }
 
-body.dark-background .main-content {
-    background-color: #2a2a2a;
-}
+  .submenu-popover .menu-button:hover {
+    background-color: #e0e0e0;
+  }
 
-body.dark-background .main-content iframe {
-    background-color: #2a2a2a;
-}
 
 
 /* אנימציה חלקה לפתיחת תפריטים */
@@ -169,38 +186,44 @@ body.dark-background .main-content iframe {
 
 </head>
 <body>
-<div id="overlay" onclick="closeAllSubmenus()"></div>
+<div id="overlay" class="overlay"></div>
 
 <div class="container">
-    <div class="sidebar" id="sidebar">
+  <div class="sidebar" id="sidebar">
 
-        <!-- תפריט תורים -->
-        <div class="menu-with-submenu">
-            <button class="menu-button" onclick="toggleSubmenu('appointmentsSubmenu')">📅 תורים</button>
-            <div id="appointmentsSubmenu" class="submenu horizontal-submenu">
-                <button class="menu-button" onclick="loadPage('admin_appointments.php', this)" data-submenu="appointmentsSubmenu">✅ פגישות שלי</button>
-                <button class="menu-button" onclick="loadPage('add_availability.php', this)" data-submenu="appointmentsSubmenu">➕ הוסף פגישה חדשה</button>
-            </div>
-        </div>
+    <!-- כפתור ראשי -->
+    <button id="menu-appointments" class="menu-button">📅 תורים</button>
+
+    <!-- שכבת רקע כהה -->
+    <div id="overlay-appointments" class="overlay-background">
+      <!-- תפריט צף ליד הכפתור -->
+      <div id="appointmentsPopover" class="submenu-popover">
+        <button class="menu-button submenu-btn" data-page="admin_appointments.php">✅ פגישות שלי</button>
+        <button class="menu-button submenu-btn" data-page="add_availability.php">➕ הוסף פגישה חדשה</button>
+      </div>
+    </div>
+
+
 
         <!-- תפריט לקוחות -->
-        <div class="menu-with-submenu">
-            <button class="menu-button" onclick="toggleSubmenu('customersSubmenu')">👥 ניהול לקוחות</button>
-            <div id="customersSubmenu" class="submenu horizontal-submenu">
-                <button class="menu-button" onclick="loadPage('manage_customers.php', this)" data-submenu="customersSubmenu">📄 רשימת לקוחות</button>
-                <button class="menu-button" onclick="loadPage('manage_customers.php', this, 'toggleSummary')" data-submenu="customersSubmenu">📊 סיכום נתונים</button>
-                <button class="menu-button" onclick="loadPage('assign_payment_plan.php', this, 'darken')" data-submenu="customersSubmenu">💳 הקצאת תשלום</button>
-            </div>
-        </div>
+        <button class="menu-button has-submenu" data-target="customersPopover">👥 ניהול לקוחות</button>
+<div class="overlay-background" id="overlay-customers">
+  <div class="submenu-popover sidebar-bg" id="customersPopover">
+    <button class="menu-button submenu-btn" data-page="manage_customers.php">📄 רשימת לקוחות</button>
+    <button class="menu-button submenu-btn" data-page="manage_customers.php" data-action="toggleSummary">📊 סיכום נתונים</button>
+    <button class="menu-button submenu-btn" data-page="assign_payment_plan.php" data-action="darken">💳 הקצאת תשלום</button>
+  </div>
+</div>
+    <!-- כפתור תפריט הקצאת תפריט -->
+    <button id="menu-meal" class="menu-button">🍽 הקצאת תפריט</button>
 
-        <!-- תפריט הקצאת תפריט -->
-        <div class="menu-with-submenu">
-            <button class="menu-button" onclick="toggleSubmenu('menuAssignmentSubmenu')">🍽 הקצאת תפריט</button>
-            <div id="menuAssignmentSubmenu" class="submenu horizontal-submenu">
-                <button class="menu-button" onclick="loadPage('admin_assign_menu.php', this, 'toggleMenuForm')" data-submenu="menuAssignmentSubmenu">📋 הקצה תפריט שבועי</button>
-                <button class="menu-button" onclick="loadPage('admin_assign_menu.php', this, 'toggleActualMeals')" data-submenu="menuAssignmentSubmenu">🍽 ארוחות בפועל</button>
-            </div>
-        </div>
+    <!-- שכבת רקע כהה ותפריט צף -->
+    <div id="overlay-meal" class="overlay-background">
+    <div id="mealPopover" class="submenu-popover">
+        <button class="menu-button submenu-btn" data-page="admin_assign_menu.php" data-action="toggleMenuForm">📋 הקצה תפריט שבועי</button>
+        <button class="menu-button submenu-btn" data-page="admin_assign_menu.php" data-action="toggleActualMeals">🍽 ארוחות בפועל</button>
+    </div>
+    </div>
 
         <!-- יציאה -->
         <a href="login admin/login_admin.html" class="logout">🚪 התנתק</a>
@@ -212,20 +235,19 @@ body.dark-background .main-content iframe {
     </div>
 </div>
 
+<div id="overlay-appointments" class="overlay-background">
 
     <script>
 function loadPage(pageUrl, element = null, action = null) {
     const iframe = document.getElementById("contentFrame");
 
-    // ניקוי תתי תפריטים ורקע
+    // סגור את כל תתי התפריטים
     document.querySelectorAll(".submenu").forEach(el => el.style.display = "none");
-    document.body.classList.remove("dark-background");
-    iframe.contentWindow?.postMessage("lighten", "*");
 
-    // טען דף חדש
+    // טען את הדף ב־iframe
     iframe.src = pageUrl;
 
-    // טפל בהודעת פעולה (action) לאחר הטעינה
+    // המתן לטעינה, ואז שלח פעולה רלוונטית
     iframe.onload = () => {
         const win = iframe.contentWindow;
 
@@ -237,20 +259,14 @@ function loadPage(pageUrl, element = null, action = null) {
             },
             "admin_assign_menu.php": () => {
                 if (action === "toggleMenuForm" || action === "toggleActualMeals") {
-                    document.body.classList.add("dark-background");
-                    win.postMessage("darken", "*");
                     win.postMessage(action, "*");
                 }
             },
             "assign_payment_plan.php": () => {
-                if (action === "darken") {
-                    document.body.classList.add("dark-background");
-                    win.postMessage("darken", "*");
-                }
+                // אין פעולות נוספות
             }
         };
 
-        // הפעל פעולה לפי הדף
         if (actionsMap[pageUrl]) {
             actionsMap[pageUrl]();
         } else if (action) {
@@ -260,32 +276,17 @@ function loadPage(pageUrl, element = null, action = null) {
 }
 
 
-
 function toggleSubmenu(id) {
     const submenu = document.getElementById(id);
     const isVisible = submenu.style.display === "flex";
 
-    // סגור את כל התתי תפריטים
+    // סגור את כל שאר תתי התפריטים
     document.querySelectorAll(".submenu").forEach(el => el.style.display = "none");
 
-    if (!isVisible) {
-        submenu.style.display = "flex";
-
-        // הפעל overlay + רקע כהה
-        document.body.classList.add("dark-background", "overlay-visible");
-
-        const iframe = document.getElementById("contentFrame");
-        iframe.contentWindow.postMessage("darken", "*");
-    } else {
-        submenu.style.display = "none";
-
-        // הסר overlay + רקע כהה
-        document.body.classList.remove("dark-background", "overlay-visible");
-
-        const iframe = document.getElementById("contentFrame");
-        iframe.contentWindow.postMessage("lighten", "*");
-    }
+    // פתח או סגור את התפריט
+    submenu.style.display = isVisible ? "none" : "flex";
 }
+
 
 function callIframeFunction(functionName) {
     const iframe = document.getElementById("contentFrame");
@@ -302,23 +303,114 @@ function callIframeFunction(functionName) {
 
 function closeAllSubmenus() {
     document.querySelectorAll(".submenu").forEach(el => el.style.display = "none");
-    document.body.classList.remove("dark-background", "overlay-visible");
-
-    const iframe = document.getElementById("contentFrame");
-    iframe.contentWindow.postMessage("lighten", "*");
 }
 
-window.addEventListener("message", function(event) {
-    if (event.data === "darken") {
-        document.body.classList.add("dark-background");
-    } else if (event.data === "lighten") {
-        document.body.classList.remove("dark-background");
-    }
+document.addEventListener("DOMContentLoaded", function () {
+    const button = document.getElementById("menu-appointments");
+    const overlay = document.getElementById("overlay-appointments");
+    const popover = document.getElementById("appointmentsPopover");
+    const customersBtn = document.querySelector('[data-target="customersPopover"]');
+    const customersOverlay = document.getElementById("overlay-customers");
+    const customersPopover = document.getElementById("customersPopover");
+
+customersBtn.addEventListener("click", function () {
+  if (customersOverlay.style.display === "block") {
+    customersOverlay.style.display = "none";
+  } else {
+    const rect = customersBtn.getBoundingClientRect();
+    customersPopover.style.top = (rect.bottom + window.scrollY - 50) + "px";
+    customersPopover.style.right = (window.innerWidth - rect.left + 20) + "px";
+    customersOverlay.style.display = "block";
+  }
+});
+
+
+customersOverlay.addEventListener("click", function (event) {
+  if (
+    !event.target.closest('.submenu-popover') &&
+    !event.target.closest('[data-target="customersPopover"]')
+  ) {
+    customersOverlay.style.display = "none";
+  }
+  const mealBtn = document.getElementById("menu-meal");
+const mealOverlay = document.getElementById("overlay-meal");
+const mealPopover = document.getElementById("mealPopover");
+
+mealBtn.addEventListener("click", function () {
+  if (mealOverlay.style.display === "block") {
+    mealOverlay.style.display = "none";
+  } else {
+    const rect = mealBtn.getBoundingClientRect();
+    mealPopover.style.top = (rect.bottom + window.scrollY - 50) + "px";
+    mealPopover.style.right = (window.innerWidth - rect.left + 20) + "px";
+    mealOverlay.style.display = "block";
+  }
+});
+
+mealOverlay.addEventListener("click", function (event) {
+  if (
+    !event.target.closest('.submenu-popover') &&
+    !event.target.closest('#menu-meal')
+  ) {
+    mealOverlay.style.display = "none";
+  }
+});
+
+mealPopover.querySelectorAll(".submenu-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
+    const page = this.dataset.page;
+    const action = this.dataset.action || null;
+    mealOverlay.style.display = "none";
+    loadPage(page, this, action);
+  });
+});
+
+});
+
+customersPopover.querySelectorAll(".submenu-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
+    const page = this.dataset.page;
+    const action = this.dataset.action || null;
+    customersOverlay.style.display = "none";
+    loadPage(page, this, action);
+  });
 });
 
 
 
+    button.addEventListener("click", function () {
+  if (overlay.style.display === "block") {
+    overlay.style.display = "none";
+  } else {
+    const rect = button.getBoundingClientRect();
 
+    popover.style.top = (rect.bottom + window.scrollY - 50) + "px";
+
+    // כיוון ימין לפי תחילת הכפתור, כדי שהתפריט יופיע ממש לידו משמאל
+    popover.style.right = (window.innerWidth - rect.left + 20) + "px";
+
+    overlay.style.display = "block";
+  }
+});
+
+    // סגירה בלחיצה מחוץ לתפריט
+    overlay.addEventListener("click", function (event) {
+    if (!event.target.closest('.submenu-popover') && !event.target.closest('#menu-appointments'))
+    overlay.style.display = "none";
+});
+
+
+    // סגירה בלחיצה על אחד התתי-כפתורים + טעינה
+    document.querySelectorAll(".submenu-btn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const page = this.dataset.page;
+        overlay.style.display = "none";
+        loadPage(page, this); // הפונקציה שלך לטעינת הדף
+      });
+    });
+  });
+
+ 
     </script>
 </body>
 </html>

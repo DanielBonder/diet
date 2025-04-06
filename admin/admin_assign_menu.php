@@ -140,19 +140,7 @@ if ($actual_result && $actual_result->num_rows > 0) {
             font-weight: bold;
             margin: 10px 0;
         }
-        .dashboard-button {
-            margin-bottom: 20px;
-        }
-        .dashboard-button a {
-            background-color: #007BFF;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-        .dashboard-button a:hover {
-            background-color: #0056b3;
-        }
+ 
     </style>
 </head>
 <body>
@@ -274,9 +262,6 @@ if ($actual_result && $actual_result->num_rows > 0) {
     } else if (event.data === "toggleActualMeals") {
         const section = document.getElementById('actualMealsSection');
         if (section) section.style.display = 'block';
-    } else if (event.data === "darken") {
-        document.body.style.backgroundColor = "#2a2a2a";
-        document.body.style.color = "white";
     }
 });
 

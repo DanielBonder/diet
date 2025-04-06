@@ -157,17 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">הוסף זמינות</button>
 </form>
-<script>
-window.addEventListener("message", function(event) {
-    if (event.data === "darken") {
-        document.body.style.backgroundColor = "#2a2a2a";
-        document.body.style.color = "white";
-    } else if (event.data === "lighten") {
-        document.body.style.backgroundColor = "";
-        document.body.style.color = "";
-    }
-});
-</script>
+ 
 
 </body>
 </html>
