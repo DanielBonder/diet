@@ -400,14 +400,16 @@ customersPopover.querySelectorAll(".submenu-btn").forEach(btn => {
 });
 
 
-    // סגירה בלחיצה על אחד התתי-כפתורים + טעינה
-    document.querySelectorAll(".submenu-btn").forEach(btn => {
-      btn.addEventListener("click", function () {
-        const page = this.dataset.page;
-        overlay.style.display = "none";
-        loadPage(page, this); // הפונקציה שלך לטעינת הדף
-      });
-    });
+// סגירה בלחיצה על אחד התתי-כפתורים + טעינה
+document.querySelectorAll(".submenu-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
+    const page = this.dataset.page;
+    const action = this.dataset.action || null;
+    overlay.style.display = "none";
+    loadPage(page, this, action); // ✅ עכשיו ה-action יעבור
+  });
+});
+
   });
 
  
