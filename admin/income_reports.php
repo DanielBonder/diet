@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
-    die("\u26d4\ufe0f אין גישה. עמוד זה מיועד רק למנהלים.");
+    die("אין גישה. עמוד זה מיועד רק למנהלים.");
 }
 
 require_once 'db.php';

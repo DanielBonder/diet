@@ -81,67 +81,7 @@ if ($actual_result && $actual_result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <title>הקצאת תפריט שבועי</title>
-    <style>
-        body {
-            direction: rtl;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            padding: 30px;
-            text-align: center;
-        }
-        form {
-            background-color: #fff;
-            padding: 20px;
-            margin: auto;
-            width: 90%;
-            max-width: 700px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        select, textarea, button {
-            width: 100%;
-            margin-top: 8px;
-            padding: 8px;
-            font-size: 14px;
-        }
-        textarea {
-            resize: vertical;
-        }
-        td textarea {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-        }
-        th {
-            background-color: #f0f0f0;
-        }
-        h2 {
-            margin-bottom: 20px;
-        }
-        .message {
-            color: #2e7d32;
-            font-weight: bold;
-            margin: 10px 0;
-        }
- 
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin_css/admin_assign_menu.css">
 </head>
 <body>
 
@@ -264,8 +204,6 @@ if ($actual_result && $actual_result->num_rows > 0) {
         if (section) section.style.display = 'block';
     }
 });
-
-
 
 </script>
 

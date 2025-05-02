@@ -61,7 +61,7 @@ while ($row = $result->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <title>אזור אישי</title>
-    <link rel="stylesheet" href="../../assets/css/user_dashboard.css">
+    <link rel="stylesheet" href="../../assets/css/user_css/user_dashboard.css">
 
 </head>
 <body>

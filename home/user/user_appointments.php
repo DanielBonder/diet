@@ -140,7 +140,7 @@ if ($duration > 0 && $from_date && $to_date && $from_time && $to_time && empty($
 <head>
     <meta charset="UTF-8">
     <title>קביעת פגישה</title>
-    <link rel="stylesheet" href="../../assets/css/user_appointments.css">
+    <link rel="stylesheet" href="../../assets/css/user_css/user_appointments.css">
 </head>
 <body>
 

@@ -1,0 +1,168 @@
+/* מבנה כללי */
+body {
+    direction: rtl;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.5s ease;
+    background-color: #f9f9f9;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* סרגל צד */
+.sidebar {
+    width: 220px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 11;
+    transition: background-color 0.5s ease;
+}
+
+/* כפתורים בתפריט ותתי תפריטים */
+.menu-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    text-align: right;
+    cursor: pointer;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.menu-button:hover,
+.sidebar a.logout:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* תתי תפריטים */
+.menu-with-submenu {
+    position: relative;
+}
+
+.submenu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+.horizontal-submenu {
+    position: absolute;
+    top: 0;
+    right: 108%;
+    background-color: #2c3e50;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.25);
+    z-index: 20;
+    min-width: 200px;
+    color: white;
+}
+
+/* תוכן ראשי */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow: auto;
+    position: relative;
+    z-index: 10;
+    background-color: white;
+    transition: background-color 0.5s ease;
+}
+
+iframe {
+    width: 100%;
+    height: 90vh;
+    border: none;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    transition: background-color 0.5s ease;
+}
+
+/* כותרת */
+h1 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+/* כפתור יציאה */
+.logout {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    text-align: right;
+    cursor: pointer;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.menu-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+  }
+
+  .menu-button:hover {
+    background-color: #0056b3;
+  }
+
+  .overlay-background {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  .submenu-popover {
+    position: absolute;
+    background-color: #343a40;
+    color: white;     
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1100;
+    direction: rtl;
+    min-width: 200px;
+  }
+
+  .submenu-popover .menu-button {
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: right;
+  }
+
+  .submenu-popover .menu-button:hover {
+    background-color: #e0e0e0;
+  }
+
+
+
+/* אנימציה חלקה לפתיחת תפריטים */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
