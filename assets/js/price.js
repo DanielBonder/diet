@@ -1,31 +1,16 @@
-function calculatePrice() {
-    const duration = parseInt(document.getElementById("duration").value);
-    const plan = document.getElementById("plan").value;
+console.log("✅ price.js loaded");
 
-    let basePrice = 0;
-    switch (plan) {
-        case "basic":
-            basePrice = 450;
-            break;
-        case "premium":
-            basePrice = 650;
-            break;
-    }
+  function showPrice() {
+    const price = document.getElementById("plan").value;
+    const priceText = price ? `המחיר: ₪${price}` : "";
+    document.getElementById("price-result").innerText = priceText;
+    document.getElementById("purchase-btn").style.display = price ? "inline-block" : "none";
+    window.selectedTotal = price;
+  }
 
-    let total = basePrice * duration;
-
-    if (duration === 2) total *= 0.95;
-    if (duration === 3) total *= 0.90;
-    if (duration === 6) total *= 0.85;
-
-    document.getElementById("price-result").innerText = `המחיר הכולל: ₪${total.toFixed(0)}`;
-    document.getElementById("purchase-btn").style.display = "block";
-    window.selectedTotal = total.toFixed(0);
-}
-
-function purchase() {
+  function purchase() {
     const phone = '0546781613'; // שנה למספר שלך
-    const message = `שלום! אני מעוניין לרכוש את התוכנית שבחרתי בעלות של ₪${window.selectedTotal}`;
-    const link = `https://wa.me/972${phone}?text=${encodeURIComponent(message)}`;
+    const message = `שלום! אני מעוניין לרכוש תוכנית בעלות של ₪${window.selectedTotal}`;
+    const link = `https://wa.me/972${phone.substring(1)}?text=${encodeURIComponent(message)}`;
     window.open(link, '_blank');
-}
+  }

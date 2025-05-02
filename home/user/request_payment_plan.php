@@ -27,55 +27,7 @@ while ($row = $planResults->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <title>אזור אישי</title>
-    <style>
-        body {
-            direction: rtl;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 40px;
-            text-align: center;
-        }
-        h2 {
-            color: #333;
-            margin-bottom: 30px;
-        }
-        section {
-            background-color: #fff;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 60%;
-            text-align: right;
-        }
-        h3 {
-            color: #007bff;
-        }
-        button, .link-button, select {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        button:hover, .link-button:hover {
-            background-color: #218838;
-        }
-        select {
-            width: 100%;
-            background: white;
-            color: black;
-        }
-        .message {
-            color: #2e7d32;
-            font-weight: bold;
-            margin: 10px 0 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/home.css">
 </head>
 <body>
 
