@@ -16,14 +16,29 @@ $message = "";
 // מצב עריכה
 $edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : null;
 
-// מחיקת לקוח
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
 
-    // קודם מוחקים מהטבלה התלויה
-    $conn->query("DELETE FROM user_weekly_menus WHERE user_id = $id");
+    // בדיקת חוב פתוח ללקוח
+    $checkDebt = $conn->prepare("SELECT COUNT(*) FROM payments WHERE user_id = ? AND status = 'לא שולם'");
+    $checkDebt->bind_param("i", $id);
+    $checkDebt->execute();
+    $checkDebt->bind_result($debtCount);
+    $checkDebt->fetch();
+    $checkDebt->close();
 
-    // אחר כך מוחקים את המשתמש
+    if ($debtCount > 0) {
+        // יש חוב – לא נמשיך למחיקה
+        header("Location: manage_customers.php?error=debt");
+        exit;
+        
+    }
+
+    // אם אין חוב – נמשיך למחיקה
+    $conn->query("DELETE FROM user_weekly_menus WHERE user_id = $id");
+    $conn->query("DELETE FROM user_meals_actual WHERE user_id = $id");
+    $conn->query("DELETE FROM payments WHERE user_id = $id");
+    $conn->query("DELETE FROM appointments WHERE user_id = $id");
     $conn->query("DELETE FROM users WHERE id = $id AND is_admin = 0");
 
     header("Location: manage_customers.php");
@@ -268,6 +283,11 @@ body.add-bg {
     </style>
 </head>
 <body>
+<?php if (isset($_GET['error']) && $_GET['error'] === 'debt'): ?>
+    <div style="background-color: #ffe5e5; color: #a94442; border: 1px solid #f5c6cb; padding: 15px; margin: 20px auto; width: 80%; text-align: center; border-radius: 8px;">
+        ⚠️ לא ניתן למחוק לקוח שיש לו חוב פתוח. אנא הסדר את החוב לפני המחיקה.
+    </div>
+<?php endif; ?>
 
 
 <div id="summaryBox" style="display: none;">
