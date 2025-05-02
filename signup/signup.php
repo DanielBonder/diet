@@ -47,90 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הרשמה</title>
-    <link rel="stylesheet" type="text/css" href="signup.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e0f7fa;
-            direction: rtl;
-            text-align: center;
-            padding: 50px;
-        }
-
-        .signup-container {
-            background-color: white;
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 400px;
-            margin: auto;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        input[type="submit"] {
-            background-color: #00796b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #004d40;
-        }
-
-        .back-home {
-            margin-bottom: 20px;
-        }
-
-        .home-button {
-            text-decoration: none;
-            background-color: #0288d1;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .home-button:hover {
-            background-color: #01579b;
-        }
-
-        #error {
-            color: red;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        #success {
-    color: green;
-    font-weight: bold;
-    margin-top: 12px;
-}
-
-#error {
-    color: red;
-    font-weight: bold;
-    margin-top: 12px;
-}
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="../assets/css/signup.css">
+        
 </head>
 <body>
 	<div class="back-home">
-		<a href="../home/home.php" class="home-button">חזרה לדף הבית</a>
+		<a href="../home.php" class="home-button">חזרה לדף הבית</a>
 	</div>
 
     <div class="signup-container">

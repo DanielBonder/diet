@@ -304,7 +304,7 @@ body {
                 <span class="icon">💳</span>
                 <span class="text">תשלום</span>
             </button>
-            <a class="header-button home-btn" href="../home.php">
+            <a class="header-button home-btn" href="../../home.php">
                 <span class="icon">⬅</span>
                 <span class="text">חזרה ל־Home</span>
             </a>

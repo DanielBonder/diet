@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </style>';
 
             // הפניה אחרי 2 שניות
-            header("Refresh:2; url=../home/home.php");
+            header("Refresh:2; url=../home.php");
             exit();
         } else {
             displayError("Error: Invalid password.");

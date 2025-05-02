@@ -19,10 +19,17 @@ $edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : null;
 // מחיקת לקוח
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
+
+    // קודם מוחקים מהטבלה התלויה
+    $conn->query("DELETE FROM user_weekly_menus WHERE user_id = $id");
+
+    // אחר כך מוחקים את המשתמש
     $conn->query("DELETE FROM users WHERE id = $id AND is_admin = 0");
+
     header("Location: manage_customers.php");
     exit;
 }
+
 
 // עדכון לקוח
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {

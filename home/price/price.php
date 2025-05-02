@@ -7,7 +7,7 @@
 </head>
 <body dir="rtl" style="font-family: Arial, sans-serif;">
 <div class="back-home">
-    <a href="../home.php" class="home-button">חזרה לדף הבית</a>
+    <a href="../../home.php" class="home-button">חזרה לדף הבית</a>
 </div>
   
   <form class="plan-container" onsubmit="purchase(); return false;">
