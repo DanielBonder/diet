@@ -58,6 +58,10 @@ CREATE TABLE payments (
   FOREIGN KEY (plan_id) REFERENCES payment_plans(id)
 );
 
+ALTER TABLE payments
+ADD COLUMN request_status ENUM('בהמתנה', 'מאושר', 'נדחה') DEFAULT 'בהמתנה';
+
+
 INSERT INTO payment_plans (name, duration_months, price) VALUES
 ('ליווי חודשי', 1, 650),
 ('ליווי ל-3 חודשים', 3, 1350),
@@ -73,3 +77,6 @@ CREATE TABLE user_menus (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ALTER TABLE user_meals_actual ADD COLUMN comment TEXT;
+
+
+

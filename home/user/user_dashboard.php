@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../../login/login.php");
+    header(header: "Location: ../../login/login.php");
     exit;
 }
 
@@ -13,14 +13,59 @@ $user_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
 
 $plans = [];
-$planResults = $conn->query("SELECT id, name, price FROM payment_plans ORDER BY duration_months ASC");
+$planResults = $conn->query(query: "SELECT id, name, price FROM payment_plans ORDER BY duration_months ASC");
 while ($row = $planResults->fetch_assoc()) {
     $plans[] = $row;
 }
 
 $meal_types = ['בוקר', 'ביניים1', 'צהריים', 'ביניים2', 'ערב', 'לפני שינה'];
 $days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-$selected_day = $_GET['day'] ?? '';
+
+if (isset($_GET['day']) || isset($_GET['meal_type'])) {
+    $_SESSION['active_section'] = 'menuSection';
+    $_SESSION['selected_day'] = $_GET['day'] ?? '';
+    $_SESSION['selected_meal_type'] = $_GET['meal_type'] ?? '';
+    header("Location: user_dashboard.php");
+    exit;
+}
+
+$selected_day = $_SESSION['selected_day'] ?? '';
+$selected_meal_type = $_SESSION['selected_meal_type'] ?? '';
+unset($_SESSION['selected_day'], $_SESSION['selected_meal_type']);
+
+$active_section = $_SESSION['active_section'] ?? '';
+unset($_SESSION['active_section']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_plan'])) {
+    $plan_id = (int)$_POST['plan_id'];
+
+    // שלוף את הסכום מהתוכנית
+    $plan_stmt = $conn->prepare("SELECT price FROM payment_plans WHERE id = ?");
+    $plan_stmt->bind_param("i", $plan_id);
+    $plan_stmt->execute();
+    $plan_stmt->bind_result($price);
+    $plan_stmt->fetch();
+    $plan_stmt->close();
+
+    if ($price) {
+        // הגדר תאריך יעד לתשלום (למשל 7 ימים מהיום)
+        $due_date = date('Y-m-d', strtotime('+7 days'));
+
+        $stmt = $conn->prepare("INSERT INTO payments (user_id, plan_id, due_date, amount) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iisd", $user_id, $plan_id, $due_date, $price);
+        $stmt->execute();
+        $stmt->close();
+
+        $_SESSION['payment_message'] = "✅ בקשת התשלום נרשמה בהצלחה!";
+        $_SESSION['active_section'] = 'paymentSection';
+        header("Location: user_dashboard.php");
+        exit;
+    } else {
+        $_SESSION['payment_message'] = "❌ שגיאה: לא נמצאה תוכנית.";
+    }
+}
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['consumed'])) {
     $day = $_POST['day'];
@@ -33,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['consumed'])) {
     $stmt->close();
 
     $_SESSION['meal_message'] = "✅ הארוחה נשמרה בהצלחה!";
-    header("Location: " . $_SERVER['REQUEST_URI']);
+    $_SESSION['active_section'] = 'menuSection';
+    header(header: "Location: user_dashboard.php"); 
     exit;
 }
 
@@ -62,9 +108,8 @@ while ($row = $result->fetch_assoc()) {
     <meta charset="UTF-8">
     <title>אזור אישי</title>
     <link rel="stylesheet" href="../../assets/css/user_css/user_dashboard.css">
-
 </head>
-<body>
+<body data-active-section="<?= $active_section ?>">
 <div id="pageOverlay" class="overlay"></div>
 
 <?php if (isset($_SESSION['meal_message'])): ?>
@@ -98,7 +143,6 @@ while ($row = $result->fetch_assoc()) {
     </div>
 </div>
 
-
 <div id="appointmentsSection" style="margin-top: 20px;">
     <section>
         <h3>📅 הפגישות שלך:</h3>
@@ -117,19 +161,26 @@ while ($row = $result->fetch_assoc()) {
     </section>
 </div>
 
- 
-
 <div id="menuSection" style="margin-top: 20px;">
     <section>
         <h3>🍽️ התפריט השבועי שלך:</h3>
-        <form method="GET">
+        <form method="GET" action="user_dashboard.php" onsubmit="setMenuSection()">
             <label>סנן לפי יום:</label>
-            <select name="day" onchange="this.form.submit()">
+            <select name="day">
                 <option value="">-- הצג הכל --</option>
                 <?php foreach ($days as $day): ?>
                     <option value="<?= $day ?>" <?= ($day === $selected_day ? 'selected' : '') ?>><?= $day ?></option>
                 <?php endforeach; ?>
             </select>
+
+            <label>סנן לפי סוג ארוחה:</label>
+            <select name="meal_type">
+                <option value="">-- הצג הכל --</option>
+                <?php foreach ($meal_types as $type): ?>
+                    <option value="<?= $type ?>" <?= ($type === $selected_meal_type ? 'selected' : '') ?>><?= $type ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit">סנן</button>
         </form>
 
         <?php
@@ -138,6 +189,8 @@ while ($row = $result->fetch_assoc()) {
             echo "<h4>📆 יום $day:</h4>";
             echo "<ul>";
             foreach ($meal_types as $type):
+                if ($selected_meal_type && $type !== $selected_meal_type) continue;
+
                 $desc = $weekly_menu[$day][$type] ?? '';
                 $existing = $actual_meals[$day][$type]['text'] ?? '';
                 $updated_at = $actual_meals[$day][$type]['time'] ?? null;
@@ -150,6 +203,12 @@ while ($row = $result->fetch_assoc()) {
                 if ($updated_at) {
                     echo "<small>עודכן לאחרונה: " . date("d/m/Y H:i", strtotime($updated_at)) . "</small><br>";
                 }
+                
+                $comment = $actual_meals[$day][$type]['comment'] ?? '';
+                if ($comment !== '') {
+                    echo "<div style='margin-top:5px; background-color: lightyellow; padding: 5px; border-radius: 5px;'>📝 הערת המנהל: " . htmlspecialchars($comment) . "</div>";
+                }
+                
                 $btn_label = $existing ? '🔄 עדכן' : '📩 שמור';
                 echo "<button type='submit' name='consumed'>$btn_label</button>";
                 echo '</form>';
@@ -160,48 +219,63 @@ while ($row = $result->fetch_assoc()) {
     </section>
 </div>
 
-
- 
 <div id="paymentSection" style="margin-top: 20px;">
     <section>
         <h3>💳 מצב תשלום:</h3>
         <?php
-        if (isset($_SESSION['payment_message'])) {
-            echo "<div class='message'>" . $_SESSION['payment_message'] . "</div>";
-            unset($_SESSION['payment_message']);
+if (isset($_SESSION['payment_message'])) {
+    echo "<div class='message'>" . $_SESSION['payment_message'] . "</div>";
+    unset($_SESSION['payment_message']);
+}
+
+$sql = "SELECT due_date, amount, status, paid_at, request_status 
+        FROM payments 
+        WHERE user_id = $user_id 
+        ORDER BY due_date ASC";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0):
+    while ($row = $result->fetch_assoc()):
+        $due_date = date("d/m/Y", strtotime($row['due_date']));
+        $amount = number_format($row['amount'], 2) . " ₪";
+
+        // קביעת סטטוס להצגה
+        if ($row['request_status'] === 'בהמתנה') {
+            $status = 'בהמתנה לאישור';
+        } elseif ($row['request_status'] === 'נדחה') {
+            $status = 'נדחה';
+        } elseif ($row['status'] === 'שולם') {
+            $status = 'שולם';
+        } else {
+            $status = 'לא שולם';
         }
 
+        echo "<p>לתשלום עד: $due_date - סכום: $amount - סטטוס: $status";
 
-        $payQ = $conn->query("SELECT due_date, amount, status, paid_at FROM payments WHERE user_id = $user_id ORDER BY due_date ASC");
-        if ($payQ && $payQ->num_rows > 0):
-            while ($row = $payQ->fetch_assoc()):
-                echo "<p>";
-                echo "לתשלום עד: " . date("d/m/Y", strtotime($row['due_date'])) . " - סכום: " . number_format($row['amount'], 2) . " ₪";
-                echo " - סטטוס: {$row['status']}";
-                if ($row['status'] === 'שולם' && $row['paid_at']) {
-                    echo " בתאריך: " . date("d/m/Y", strtotime($row['paid_at']));
-                }
-                echo "</p>";
-            endwhile;
-        else:
-            echo "<p>אין דרישות תשלום כרגע.</p>";
-        endif;
-        ?>
+        if ($row['status'] === 'שולם' && $row['paid_at']) {
+            echo " בתאריך: " . date("d/m/Y", strtotime($row['paid_at']));
+        }
+
+        echo "</p>";
+    endwhile;
+else:
+    echo "<p>אין דרישות תשלום כרגע.</p>";
+endif;
+?>
 
         <h4>📌 בחר תוכנית תשלום:</h4>
-        <form method="POST" action="">
-        <select name="plan_id" required>
+        <form method="POST" action="user_dashboard.php">
+            <select name="plan_id" required>
                 <option value="">-- בחר תוכנית --</option>
                 <?php foreach ($plans as $plan): ?>
                     <option value="<?= $plan['id'] ?>">
-                        <?= htmlspecialchars($plan['name']) ?> - <?= number_format($plan['price'], 2) ?> ₪
+                        <?= htmlspecialchars(string: $plan['name']) ?> - <?= number_format($plan['price'], 2) ?> ₪
                     </option>
                 <?php endforeach; ?>
             </select>
             <button type="submit" name="submit_plan">📩 בקש תוכנית</button>
-            </form>
+        </form>
     </section>
-    </div>
 </div>
 <script src="../../assets/js/user_dashboard.js"></script>
 </body>

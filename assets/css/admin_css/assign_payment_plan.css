@@ -45,6 +45,7 @@ body.darken-bg table {
 }
 
 label, select, button, input[type="date"], input[type="number"] {
+    display: block;
     width: 100%;
     margin-bottom: 10px;
     font-size: 15px;
@@ -147,3 +148,17 @@ body.darken-bg th {
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
   }
   
+
+.request-status-pending {
+    background-color: lightyellow;
+}
+.request-status-approved {
+    background-color: #d4edda;
+}
+.request-status-rejected {
+    background-color: #f8d7da;
+}
+.request-table td, .request-table th {
+    padding: 10px;
+    text-align: center;
+}

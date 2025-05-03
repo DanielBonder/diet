@@ -1,54 +1,59 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // הסתר את כל הסקשנים כברירת מחדל
-    var sections = ['appointmentsSection', 'menuSection', 'paymentSection'];
-    sections.forEach(function(id) {
-        var section = document.getElementById(id);
-        if (section) {
-            section.style.display = 'none';
-        }
-    });
-});
+// ✅ ודא שכל הסקשנים מוסתרים כברירת מחדל ונטען רק מה שצריך
 
 function showSection(sectionId) {
-    // הסתר את כל הסקשנים
-    var sections = ['appointmentsSection', 'menuSection', 'paymentSection'];
-    sections.forEach(function(id) {
-        var section = document.getElementById(id);
+    const sections = ['appointmentsSection', 'menuSection', 'paymentSection'];
+    sections.forEach(id => {
+        const section = document.getElementById(id);
         if (section) {
             section.style.display = 'none';
-            section.querySelector('section').classList.remove('section-active');
+            const inner = section.querySelector('section');
+            if (inner) inner.classList.remove('section-active');
         }
     });
 
-    // הצג את האוברליי
-    var overlay = document.getElementById('pageOverlay');
+    const overlay = document.getElementById('pageOverlay');
     overlay.style.display = 'block';
 
-    // הצג את הסקשן שנבחר
-    var selectedSection = document.getElementById(sectionId);
+    const selectedSection = document.getElementById(sectionId);
     if (selectedSection) {
         selectedSection.style.display = 'block';
-        selectedSection.querySelector('section').classList.add('section-active');
-        
-        // הוסף אפקט הנפשה לסקשן
-        setTimeout(function() {
-            selectedSection.scrollIntoView({behavior: 'smooth'});
-        }, 100);
+        const inner = selectedSection.querySelector('section');
+        if (inner) inner.classList.add('section-active');
+        setTimeout(() => selectedSection.scrollIntoView({ behavior: 'smooth' }), 100);
     }
-    
-    // הוסף אפשרות לסגור את האוברליי בלחיצה
-    overlay.onclick = function() {
-        sections.forEach(function(id) {
-            var section = document.getElementById(id);
+
+    overlay.onclick = () => {
+        sections.forEach(id => {
+            const section = document.getElementById(id);
             if (section) {
                 section.style.display = 'none';
-                if (section.querySelector('section')) {
-                    section.querySelector('section').classList.remove('section-active');
-                }
+                const inner = section.querySelector('section');
+                if (inner) inner.classList.remove('section-active');
             }
         });
-        this.style.display = 'none';
+        overlay.style.display = 'none';
     };
 }
 
- 
+// ✅ הפונקציה הזו מופעלת עם הטעינה כדי להציג את הסקשן הפעיל משמירה קודמת
+
+window.addEventListener('DOMContentLoaded', () => {
+    const sections = ['appointmentsSection', 'menuSection', 'paymentSection'];
+    const activeSection = document.body.dataset.activeSection;
+
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) section.style.display = 'none';
+    });
+
+    if (activeSection && sections.includes(activeSection)) {
+        showSection(activeSection);
+    } else if (sessionStorage.getItem('scrollToMenu') === 'yes') {
+        showSection('menuSection');
+        sessionStorage.removeItem('scrollToMenu');
+    }
+});
+
+function setMenuSection() {
+    sessionStorage.setItem('scrollToMenu', 'yes');
+}

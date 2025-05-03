@@ -17,6 +17,20 @@ if ($conn->connect_error) {
 
 $message = "";
 $edit_id = isset($_GET['edit']) ? (int)$_GET['edit'] : null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['approve_request'])) {
+        $id = (int) $_POST['payment_id'];
+        $conn->query("UPDATE payments SET request_status = 'מאושר' WHERE id = $id");
+        $message = "✅ בקשה אושרה.";
+    }
+
+    if (isset($_POST['reject_request'])) {
+        $id = (int) $_POST['payment_id'];
+        $conn->query("UPDATE payments SET request_status = 'נדחה' WHERE id = $id");
+        $message = "❌ בקשה נדחתה.";
+    }
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_payment'])) {
     $payment_id = (int) $_POST['payment_id'];
@@ -91,8 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['pl
 
             for ($i = 0; $i < $months; $i++) {
                 $due_date = (clone $today)->modify("+$i month")->format('Y-m-d');
-                $stmt = $conn->prepare("INSERT INTO payments (user_id, plan_id, due_date, amount) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("iisd", $user_id, $plan_id, $due_date, $monthly_amount);
+                $request_status = 'מאושר';
+                $stmt = $conn->prepare("INSERT INTO payments (user_id, plan_id, due_date, amount, request_status) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("iisds", $user_id, $plan_id, $due_date, $monthly_amount, $request_status);
                 if ($stmt->execute()) {
                     $success++;
                 }
@@ -161,6 +176,20 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
+$pending_menu_requests = [];
+$sql_pending_menus = "SELECT p.id, u.full_name, pp.name AS plan_name, p.due_date, p.amount
+                      FROM payments p
+                      JOIN users u ON p.user_id = u.id
+                      JOIN payment_plans pp ON p.plan_id = pp.id
+                      WHERE p.request_status = 'בהמתנה'
+                      ORDER BY p.due_date ASC";
+
+$res = $conn->query($sql_pending_menus);
+while ($row = $res->fetch_assoc()) {
+    $pending_menu_requests[] = $row;
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -208,11 +237,12 @@ if ($result && $result->num_rows > 0) {
   </div>
 </div>
 
+
+<h2>💳 תשלומים פתוחים</h2>
 <?php if (!empty($message)): ?>
         <div class="message"><?= htmlspecialchars($message) ?></div>
     <?php endif; ?>
-    
-<h2>💳 תשלומים פתוחים</h2>
+
 <form method="GET" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: center;">
 <label>
     שם משתמש:
@@ -286,10 +316,11 @@ if ($result && $result->num_rows > 0) {
 
         <!-- סטטוס כ-select -->
         <td>
-        <?= htmlspecialchars($row['status']) ?>
-        <input type="hidden" name="status" value="<?= htmlspecialchars($row['status']) ?>">
+            <select name="status" required>
+                <option value="לא שולם" <?= $row['status'] === 'לא שולם' ? 'selected' : '' ?>>לא שולם</option>
+                <option value="שולם" <?= $row['status'] === 'שולם' ? 'selected' : '' ?>>שולם</option>
+            </select>
         </td>
-
 
         <!-- כפתורים -->
         <td class="inline-actions">
@@ -318,9 +349,43 @@ if ($result && $result->num_rows > 0) {
         <?php endif; ?>
     <?php endforeach; ?>
 </table>
-
+<h2>📥 בקשות לתפריט – ממתינות לאישור</h2>
+<?php if (empty($pending_menu_requests)): ?>
+    <p>אין בקשות תפריט שממתינות לאישור.</p>
+<?php else: ?>
+    <table>
+        <tr>
+            <th>שם משתמש</th>
+            <th>תוכנית</th>
+            <th>תאריך</th>
+            <th>סכום</th>
+            <th>פעולה</th>
+        </tr>
+        <?php foreach ($pending_menu_requests as $row): ?>
+            <tr>
+                <td><?= htmlspecialchars($row['full_name']) ?></td>
+                <td><?= htmlspecialchars($row['plan_name']) ?></td>
+                <td><?= htmlspecialchars($row['due_date']) ?></td>
+                <td><?= number_format($row['amount'], 2) ?> ₪</td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        <input type="hidden" name="payment_id" value="<?= $row['id'] ?>">
+                        <button type="submit" name="approve_request">✅ אשר</button>
+                        <button type="submit" name="reject_request">❌ דחה</button>
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
 
 <?php if (!empty($message)): ?>
+
+
+
+    
+
+    
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("assignModal").style.display = "block";
