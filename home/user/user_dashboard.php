@@ -108,8 +108,33 @@ while ($row = $result->fetch_assoc()) {
     <meta charset="UTF-8">
     <title>אזור אישי</title>
     <link rel="stylesheet" href="../../assets/css/user_css/user_dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Suez+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Attraction&display=swap" rel="stylesheet">
+
 </head>
 <body data-active-section="<?= $active_section ?>">
+<header>
+    <div class="logo">
+        <img src="../../assets/images/logo2.png" alt="לוגו">
+    </div>
+    <nav>
+        <ul>
+            <li><a href="../../home.php">בית</a></li>
+            <li><a href="#">נעים להכיר</a></li>
+            <li><a href="#">תוכניות</a></li>
+            <li><a href="#">תשאלו אותם</a></li>
+            <li><a href="../../home/price/price.php">תפריטים ועוד</a></li>
+
+            <?php if (isset($_SESSION['username'])): ?>
+                <li><a href="user_dashboard.php">שלום, <?= htmlspecialchars(string: $_SESSION['username']) ?></a></li>
+                <li><a href="../../login/logout.php">התנתקות</a></li>
+            <?php else: ?>
+                <li><a href="../../login/login.html" class="login-btn">התחברות</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</header>
+
 <div id="pageOverlay" class="overlay"></div>
 
 <?php if (isset($_SESSION['meal_message'])): ?>
@@ -117,31 +142,25 @@ while ($row = $result->fetch_assoc()) {
     <?php unset($_SESSION['meal_message']); ?>
 <?php endif; ?>
 
-<div class="header-container">
-    <div class="header">
-        <div class="welcome-message">
-            <h2>שלום <?= htmlspecialchars($full_name) ?>, ברוך הבא לאזור האישי שלך</h2>
-        </div>
-        <div class="header-buttons">
-            <button class="header-button appointments-btn" onclick="showSection('appointmentsSection')">
-                <span class="icon">📅</span>
-                <span class="text">פגישות</span>
-            </button>
-            <button class="header-button menu-btn" onclick="showSection('menuSection')">
-                <span class="icon">🍽️</span>
-                <span class="text">תפריט</span>
-            </button>
-            <button class="header-button payment-btn" onclick="showSection('paymentSection')">
-                <span class="icon">💳</span>
-                <span class="text">תשלום</span>
-            </button>
-            <a class="header-button home-btn" href="../../home.php">
-                <span class="icon">⬅</span>
-                <span class="text">חזרה ל־Home</span>
-            </a>
-        </div>
+<div class="sidebar">
+    <div class="sidebar-buttons">
+        <button class="header-button appointments-btn" onclick="showSection('appointmentsSection')">
+            📅 פגישות
+        </button>
+        <button class="header-button menu-btn" onclick="showSection('menuSection')">
+            🍽️ תפריט
+        </button>
+        <button class="header-button payment-btn" onclick="showSection('paymentSection')">
+            💳 תשלום
+        </button>
+
     </div>
 </div>
+
+<div class="welcome-banner">
+    <h2>שלום <?= htmlspecialchars($full_name) ?>, ברוך הבא לאזור האישי שלך</h2>
+</div>
+
 
 <div id="appointmentsSection" style="margin-top: 20px;">
     <section>

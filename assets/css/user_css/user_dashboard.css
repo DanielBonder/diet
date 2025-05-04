@@ -1,219 +1,300 @@
+/* בסיס */
 body {
     direction: rtl;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    padding: 40px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Suez One', serif;
     text-align: center;
-}
-section {
-    background-color: #fff;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 60%;
-    text-align: right;
-}
-h2, h3, h4 {
-    color: #333;
-}
-.link-button, button, select {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-    display: inline-block;
-}
-.link-button:hover, button:hover {
-    background-color: #218838;
-}
-select {
-    background: white;
-    color: black;
-    width: 100%;
-}
-textarea {
-    width: 100%;
-    margin-top: 5px;
-}
-.message {
-    font-weight: bold;
-    color: #2e7d32;
-    margin-bottom: 15px;
-}
-small {
-    color: gray;
-}
-/* Reset and base styles */
-.header-container {
-direction: rtl;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-width: 100%;
-background-color: #f8f9fa;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-position: fixed;
-top: 0;
-left: 0;
-z-index: 1000;
+    background: linear-gradient(to right, #ffe4b5, #ffb6c1);
+    padding-top: 140px;
 }
 
+/* מבנה כללי */
+section {
+    background-color: white;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 40px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 85%;
+    max-width: 900px;
+    text-align: right;
+}
+
+/* כותרות */
+h2, h3, h4 {
+    font-family: 'Attraction', sans-serif;
+    color: #8b0000;
+}
+
+/* הודעות */
+.message {
+    font-weight: bold;
+    color: darkgreen;
+    background-color: #f0fff0;
+    border: 2px solid #c1e1c1;
+    padding: 10px;
+    border-radius: 15px;
+    width: fit-content;
+    margin: 10px auto;
+}
+
+/* כפתורים */
+button, .link-button, select {
+    background-color: blanchedalmond;
+    color: black;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    font-family: 'Suez One', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+button:hover, .link-button:hover {
+    background-color: #f5deb3;
+    color: darkred;
+}
+
+/* טקסטים */
+textarea {
+    width: 100%;
+    border-radius: 20px;
+    margin-top: 5px;
+    padding: 10px;
+    font-family: 'Suez One', serif;
+    resize: vertical;
+}
+
+/* כותרת קבועה */
+.header-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #fff0e1;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    padding: 20px 0;
+    z-index: 950;
+}
+
+/* בתוך header */
 .header {
-max-width: 1200px;
-margin: 0 auto;
-padding: 1rem 2rem;
-display: flex;
-flex-direction: column;
-gap: 1rem;
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .welcome-message h2 {
-color: #2c3e50;
-margin: 0;
-font-size: 1.5rem;
-font-weight: 600;
+    font-size: 24px;
+    color: #8b0000;
 }
 
 .header-buttons {
-display: flex;
-gap: 0.8rem;
-flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-/* Unified button styling with explicit height control */
 .header-button {
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 0.5rem;
-padding: 0.6rem 1.2rem;
-border: none;
-border-radius: 6px;
-background-color: #3498db;
-color: white;
-font-size: 1rem;
-cursor: pointer;
-transition: all 0.3s ease;
-text-decoration: none;
-font-family: inherit;
-line-height: 1.5;
-box-sizing: border-box;
-text-align: center;
-height: 40px; /* Fixed height */
-min-width: 120px; /* Minimum width */
-}
-
-/* Button reset */
-button.header-button {
-appearance: none;
--webkit-appearance: none;
-/* Additional button-specific resets */
-margin: 0;
-overflow: visible;
-text-transform: none;
-}
-
-/* Anchor tag specific adjustments */
-a.header-button {
-/* Ensure anchor tags don't have any extra spacing */
-vertical-align: middle;
-/* Match button's line-height behavior */
-white-space: nowrap;
+    background-color: white;
+    border: 2px solid #ffb6c1;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-family: 'Suez One', serif;
+    font-size: 16px;
+    transition: 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 130px;
+    justify-content: center;
 }
 
 .header-button:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffb6c1;
+    color: white;
+    transform: scale(1.05);
 }
 
-/* Specific button colors */
-.header-button.appointments-btn { background-color: #2ecc71; }
-.header-button.menu-btn { background-color: #e74c3c; }
-.header-button.payment-btn { background-color: #9b59b6; }
-.header-button.home-btn { background-color: #34495e; }
-
-.header-button:active {
-transform: translateY(0);
+/* כיתוב קטן */
+small {
+    color: gray;
+    font-size: 12px;
 }
 
-.icon {
-font-size: 1.1rem;
+/* עיצוב ל־comment */
+.comment-box {
+    margin-top: 5px;
+    background-color: lightyellow;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 14px;
 }
 
-/* Add padding to body */
-body {
-padding-top: 120px;
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-.header {
-padding: 1rem;
+    section {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .welcome-message h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .header-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-button {
+        width: 90%;
+        font-size: 15px;
+    }
+
+    body {
+        padding-top: 180px;
+    }
 }
 
-.welcome-message h2 {
-font-size: 1.3rem;
-text-align: center;
-}
-
-.header-buttons {
-justify-content: center;
-}
-
-.header-button {
-padding: 0.5rem 1rem;
-font-size: 0.9rem;
-height: 36px; /* Slightly smaller on mobile */
-min-width: 100px;
-}
-
-body {
-padding-top: 100px;
-}
-}
-
-@media (max-width: 480px) {
-.header-buttons {
-flex-direction: column;
-width: 100%;
-}
-
-.header-button {
-width: 100%;
-height: 42px; /* Taller for touch targets */
-}
-
-body {
-padding-top: 180px;
-}
-}
-/* Overlay Styles */
+/* Overlay */
 .overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(0, 0, 0, 0.5);
-z-index: 900;
-display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 900;
+    display: none;
 }
 
-/* Active section with overlay effect */
-.section-active {
-position: relative;
-z-index: 950;
-animation: fadeIn 0.3s ease-in-out;
+.overlay.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
+/* תוכן שצף מעל ה־overlay */
+.section-active,
+.popup,
+.modal {
+    position: relative;
+    z-index: 1000;
+}
+
+/* אנימציה */
 @keyframes fadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
-.message {
-font-weight: bold;
-color: #2e7d32;
-margin-bottom: 15px;
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 100vh;
+    background-color: #fff0e1;
+    box-shadow: -2px 0 6px rgba(0,0,0,0.1);
+    z-index: 950;
+    padding-top: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    padding: 0 15px;
+}
+
+/* התאמה למבנה הראשי */
+body {
+    padding-right: 220px; /* מקום לסרגל */
+}
+
+/* באנר קבלת פנים */
+.welcome-banner {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.welcome-banner h2 {
+    font-size: 24px;
+    color: #8b0000;
+    font-family: 'Attraction', sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background-color: #fff0e1;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.logo {
+    margin-left: auto;
+}
+
+.logo img {
+    height: 100px;
+    width: 100px;
+}
+
+nav {
+    margin-right: auto;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Suez One', serif;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 90px;
+    font-weight: bold;
+    background-color: blanchedalmond;
+    color: black;
+    transition: 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #f5deb3;
+    color: darkred;
+}
+
+nav ul .welcome-user {
+    font-weight: bold;
+    color: #8b0000;
+    background: none;
+    padding: 10px;
+    font-family: 'Attraction', sans-serif;
 }
