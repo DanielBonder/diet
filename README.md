@@ -72,3 +72,18 @@ git clone https://github.com/DanielBonder/diet.git
 
 # Step 5: Run the app
 # Access it via http://localhost/diet/
+
+## 👨‍💻 Authors
+
+### 🧔 Daniel Bonder  
+🎓 B.A. in Economics & Information Systems – Tel-Hai College  
+📧 [danielbonder123@gmail.com](mailto:danielbonder123@gmail.com)  
+🐙 [GitHub](https://github.com/DanielBonder)  
+
+---
+
+### 👨‍💼 Yossi Chen Baadash  
+🎓 B.A. in Economics & Information Systems – Tel-Hai College  
+📧 [yossibaadash@gmail.com](mailto:yossibaadash@gmail.com)  
+🌐 (Coming soon...)
+
