@@ -1,75 +1,74 @@
-# 🥗 Diet Management Web Application
+<p align="center">
+  <img src="https://img.icons8.com/emoji/48/000000/green-salad-emoji.png" alt="logo" width="60" />
+</p>
 
-A full-stack web application for personalized nutrition management.  
-Built using **PHP**, **MySQL**, **HTML**, **CSS**, and **JavaScript** as part of a final-year project.
+<h1 align="center">Diet Management Web Application</h1>
 
----
-
-## 📋 Description
-
-This system is designed to help nutrition professionals manage their clients efficiently.  
-It includes tools for tracking appointments, assigning meal plans, monitoring payments, and maintaining personalized dashboards.
-
----
-
-## 🔧 Features
-
-- 👤 User login and role-based access (admin / user)
-- 🗓️ Appointment booking and calendar view
-- 🥗 Weekly meal plan assignment & tracking
-- 💳 Payment plan assignment and payment history
-- 📊 Admin dashboard with full control over users and data
-- 📦 Organized backend with modular PHP structure
-- 🌐 Responsive frontend using HTML, CSS, JavaScript
+<p align="center">
+  <i>Personalized nutrition management system built with PHP, MySQL, HTML, CSS & JavaScript</i><br>
+  <b>Final Year Project • Tel-Hai College</b>
+</p>
 
 ---
 
-## 🛠️ Technologies Used
+## 🧭 Table of Contents
 
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** PHP  
-- **Database:** MySQL  
-- **Tools:** GitHub, VS Code, XAMPP / 000webhost (for local testing)
-
----
-
-## 🚧 Project Status
-
-This project is still in development.  
-Some features are already working, while others are being improved or finalized.  
-✅ You are welcome to explore, test, and give feedback!
+- [🧠 Project Overview](#-project-overview)
+- [🎯 Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [📈 Roadmap](#-roadmap)
+- [👨‍💻 Authors](#-authors)
+- [📜 License](#-license)
 
 ---
 
-## 💡 Future Plans
+## 🧠 Project Overview
 
-- ✅ Add password recovery via email  
-- ✅ Implement email/SMS reminders  
-- ✅ Add graphs for user progress and admin stats  
-- ✅ Improve mobile responsiveness
+This platform allows **nutrition professionals** to manage clients efficiently and deliver **personalized care**.
 
----
-
-## 📂 Installation & Usage
-
-1. Clone or download the project  
-2. Set up a local server using **XAMPP** or **MAMP**  
-3. Import the database file from `/db/diet.sql` into phpMyAdmin  
-4. Update your database credentials in `db_connect.php`  
-5. Run the project from your local server (`localhost/diet`)
+🔹 Designed for real-world use: scheduling, meal planning, payment tracking  
+🔹 Built for clarity, flexibility, and scalability  
+🔹 Supports both **Admin** and **User** experiences with custom dashboards
 
 ---
 
-## 🙋‍♂️ Developed by
+## 🎯 Features
 
-**Daniel Bonder** – B.A. in Economics & Information Systems (Tel-Hai College)  
-📧 danielbonder123@gmail.com
-
-**Yossi Chen Baadash** – B.A. in Economics & Information Systems (Tel-Hai College)  
-📧 yossibaadash@gmail.com
+✨ **User Authentication** – Secure login with role-based access (admin/user)  
+📆 **Appointments** – Book, view, and manage via interactive calendar  
+🍽️ **Meal Plan Management** – Assign & track weekly plans by category (breakfast, lunch, etc.)  
+💳 **Payment Tracking** – Assign payment plans, track due dates, mark as paid  
+📊 **Admin Dashboard** – Manage users, view analytics, and oversee all activity  
+📱 **Responsive Design** – Clean, mobile-friendly interface  
+🧩 **Modular Codebase** – Well-structured PHP components for easy expansion
 
 ---
 
-## 📌 License
+## 🛠️ Tech Stack
 
-This project is for educational purposes only.
+| Layer        | Technologies                            |
+|--------------|-----------------------------------------|
+| 🎨 Frontend  | HTML, CSS, JavaScript                   |
+| 🧠 Backend   | PHP                                     |
+| 🗄️ Database  | MySQL                                   |
+| ⚙️ Dev Tools | GitHub, VS Code, XAMPP / 000webhost     |
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Step 1: Clone the repo
+git clone https://github.com/DanielBonder/diet.git
+
+# Step 2: Set up a local server (e.g., XAMPP)
+
+# Step 3: Import database
+# Open phpMyAdmin and import /db/diet.sql
+
+# Step 4: Update DB credentials
+# Edit /db/db_connect.php
+
+# Step 5: Run the app
+# Access it via http://localhost/diet/
