@@ -38,6 +38,10 @@ This platform allows **nutrition professionals** to manage clients efficiently a
 
 ---
 
+## 🖼️ Preview
+
+![Homepage Preview](./home.jpeg)
+
 ## 🎯 Features
 
 ✨ **User Authentication** – Secure login with role-based access (admin/user)  
