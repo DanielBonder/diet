@@ -23,7 +23,7 @@
 - [🛠️ Tech Stack](#️-tech-stack)
 - [🚀 Getting Started](#-getting-started)
 - [📈 Roadmap](#-roadmap)
-- [👨‍💻 Authors](#-authors)
+- [📘 Authors](#-authors)
 - [📜 License](#-license)
 
 ---
@@ -77,43 +77,3 @@ git clone https://github.com/DanielBonder/diet.git
 
 # Step 5: Run the app
 # Access it via http://localhost/diet/
-
----
-
-## 📈 Roadmap
-
-- ✅ Password recovery via email  
-- ✅ Email/SMS reminders for upcoming appointments  
-- ✅ Visual dashboards with graphs and KPIs  
-- ✅ Improved mobile UX  
-- 🔜 Full language support (Hebrew/English toggle)  
-- 🔜 Admin notifications for unpaid users  
-- 🔜 Enhanced data export (PDF / Excel reports)  
-- 🔜 AI-powered meal suggestions (future stretch goal)
-
-
-## 👨‍💻 Authors
-
-### 🧔 Daniel Bonder  
-🎓 B.A. in Economics & Information Systems – Tel-Hai College  
-📧 [danielbonder123@gmail.com](mailto:danielbonder123@gmail.com)  
-🐙 [GitHub](https://github.com/DanielBonder)
-
----
-
-### 👨‍💼 Yossi Chen Baadash  
-🎓 B.A. in Economics & Information Systems – Tel-Hai College  
-📧 [yossibaadash@gmail.com](mailto:yossibaadash@gmail.com)  
-🌐 (Coming soon...)
-
----
-
-## 📜 License
-
-📘 This project is for **educational and demonstration purposes** only.  
-Feel free to explore and use the code under the terms of the repository license.
-
-<p align="center">
-  <img src="https://img.shields.io/badge/License-Educational-lightgrey?style=flat-square" />
-</p>
----
