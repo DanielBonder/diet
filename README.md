@@ -91,7 +91,6 @@ git clone https://github.com/DanielBonder/diet.git
 - 🔜 Enhanced data export (PDF / Excel reports)  
 - 🔜 AI-powered meal suggestions (future stretch goal)
 
----
 
 ## 👨‍💻 Authors
 
@@ -117,3 +116,4 @@ Feel free to explore and use the code under the terms of the repository license.
 <p align="center">
   <img src="https://img.shields.io/badge/License-Educational-lightgrey?style=flat-square" />
 </p>
+---
